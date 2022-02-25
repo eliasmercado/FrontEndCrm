@@ -47,7 +47,7 @@ const router = new Router({
       },
       props: {
         layout: {
-          title: "Resetear Contraseñoa",
+          title: "Resetear Contraseña",
           description: "Ingrese la dirección de correo electrónico que tiene registrado y le enviaremos un enlace para restablecer su contraseña por correo electrónico."
         }
       }
