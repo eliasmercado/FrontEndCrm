@@ -4,7 +4,7 @@
       <div class="image-container">
         <div class="user-image" />
       </div>
-      <div class="user-name">{{user.email}}</div>
+      <div class="user-name">{{user.user}}</div>
     </div>
 
     <dx-context-menu

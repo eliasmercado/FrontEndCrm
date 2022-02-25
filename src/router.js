@@ -32,7 +32,7 @@ const router = new Router({
       },
       props: {
         layout: {
-          title: "Sign In"
+          title: "Iniciar Sesión"
         }
       }
     },
@@ -47,8 +47,8 @@ const router = new Router({
       },
       props: {
         layout: {
-          title: "Reset Password",
-          description: "Please enter the email address that you used to register, and we will send you a link to reset your password via Email."
+          title: "Resetear Contraseñoa",
+          description: "Ingrese la dirección de correo electrónico que tiene registrado y le enviaremos un enlace para restablecer su contraseña por correo electrónico."
         }
       }
     },

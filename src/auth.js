@@ -1,7 +1,6 @@
-const defaultUser = {
-  email: 'sandra@example.com',
-  avatarUrl: 'https://js.devexpress.com/Demos/WidgetsGallery/JSDemos/images/employees/06.png'
-};
+import axios from "axios";
+
+const defaultUser = null;
 
 export default {
   _user: defaultUser,
@@ -9,21 +8,35 @@ export default {
     return !!this._user;
   },
 
-  async logIn(email, password) {
-    try {
-      // Send request
-      console.log(email, password);
-      this._user = { ...defaultUser, email };
+  async logIn(user, password) {
+    let data = {
+      userName: user,
+      password: password
+    };
 
-      return {
-        isOk: true,
-        data: this._user
-      };
+    try {
+      let result;
+      await axios.post("http://localhost:62870/api/login", data)
+        .then(response => {
+          this._user = { ...defaultUser, user };
+          result = {
+            isOk: true,
+            data: this._user
+          }
+        })
+        .catch(error => {
+          result = {
+            isOk: false,
+            message: error.response.data.error.message
+          };
+        })
+
+      return result;
     }
     catch {
       return {
         isOk: false,
-        message: "Authentication failed"
+        message: "Error inesperado en la autenticación"
       };
     }
   },
@@ -64,38 +77,4 @@ export default {
       };
     }
   },
-
-  async changePassword(email, recoveryCode) {
-    try {
-      // Send request
-      console.log(email, recoveryCode);
-
-      return {
-        isOk: true
-      };
-    }
-    catch {
-      return {
-        isOk: false,
-        message: "Failed to change password"
-      }
-    }
-  },
-
-  async createAccount(email, password) {
-    try {
-      // Send request
-      console.log(email, password);
-
-      return {
-        isOk: true
-      };
-    }
-    catch {
-      return {
-        isOk: false,
-        message: "Failed to create account"
-      };
-    }
-  }
 };

@@ -2,18 +2,17 @@
   <form class="login-form" @submit.prevent="onSubmit">
     <dx-form :form-data="formData" :disabled="loading">
       <dx-item
-        data-field="email"
+        data-field="user"
         editor-type="dxTextBox"
-        :editor-options="{ stylingMode: 'filled', placeholder: 'Email', mode: 'email' }"
+        :editor-options="{ stylingMode: 'filled', placeholder: 'Usuario' }"
       >
-        <dx-required-rule message="Email is required" />
-        <dx-email-rule message="Email is invalid" />
+        <dx-required-rule message="Usuario es requerido" />
         <dx-label :visible="false" />
       </dx-item>
       <dx-item
         data-field='password'
         editor-type='dxTextBox'
-        :editor-options="{ stylingMode: 'filled', placeholder: 'Password', mode: 'password' }"
+        :editor-options="{ stylingMode: 'filled', placeholder: 'Contraseña', mode: 'password' }"
       >
         <dx-required-rule message="Password is required" />
         <dx-label :visible="false" />
@@ -21,7 +20,7 @@
       <dx-item
         data-field="rememberMe"
         editor-type="dxCheckBox"
-        :editor-options="{ text: 'Remember me', elementAttr: { class: 'form-text' } }"
+        :editor-options="{ text: 'Recordar usuario', elementAttr: { class: 'form-text' } }"
       >
         <dx-label :visible="false" />
       </dx-item>
@@ -37,7 +36,7 @@
       <dx-item>
         <template #default>
           <div class="link">
-            <router-link to="/reset-password">Forgot password?</router-link>
+            <router-link to="/reset-password">No recuerdo mi contraseña</router-link>
           </div>
         </template>
       </dx-item>
@@ -45,7 +44,7 @@
         <div>
           <span class="dx-button-text">
             <dx-load-indicator v-if="loading" width="24px" height="24px" :visible="true" />
-            <span v-if="!loading">Sign In</span>
+            <span v-if="!loading">Login</span>
           </span>
         </div>
       </template>
@@ -57,7 +56,6 @@
 import DxLoadIndicator from "devextreme-vue/load-indicator";
 import DxForm, {
   DxItem,
-  DxEmailRule,
   DxRequiredRule,
   DxLabel,
   DxButtonItem,
@@ -76,10 +74,10 @@ export default {
   },
   methods: {
     onSubmit: async function() {
-      const { email, password } = this.formData;
+      const { user, password } = this.formData;
       this.loading = true;
 
-      const result = await auth.logIn(email, password);
+      const result = await auth.logIn(user, password);
       if (!result.isOk) {
         this.loading = false;
         notify(result.message, "error", 2000);
@@ -91,7 +89,6 @@ export default {
   components: {
     DxLoadIndicator,
     DxForm,
-    DxEmailRule,
     DxRequiredRule,
     DxItem,
     DxLabel,
