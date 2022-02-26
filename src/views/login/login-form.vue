@@ -10,9 +10,13 @@
         <dx-label :visible="false" />
       </dx-item>
       <dx-item
-        data-field='password'
-        editor-type='dxTextBox'
-        :editor-options="{ stylingMode: 'filled', placeholder: 'Contraseña', mode: 'password' }"
+        data-field="password"
+        editor-type="dxTextBox"
+        :editor-options="{
+          stylingMode: 'filled',
+          placeholder: 'Contraseña',
+          mode: 'password',
+        }"
       >
         <dx-required-rule message="Password is required" />
         <dx-label :visible="false" />
@@ -20,7 +24,10 @@
       <dx-item
         data-field="rememberMe"
         editor-type="dxCheckBox"
-        :editor-options="{ text: 'Recordar usuario', elementAttr: { class: 'form-text' } }"
+        :editor-options="{
+          text: 'Recordar usuario',
+          elementAttr: { class: 'form-text' },
+        }"
       >
         <dx-label :visible="false" />
       </dx-item>
@@ -36,14 +43,21 @@
       <dx-item>
         <template #default>
           <div class="link">
-            <router-link to="/reset-password">No recuerdo mi contraseña</router-link>
+            <router-link to="/reset-password"
+              >No recuerdo mi contraseña</router-link
+            >
           </div>
         </template>
       </dx-item>
       <template #signInTemplate>
         <div>
           <span class="dx-button-text">
-            <dx-load-indicator v-if="loading" width="24px" height="24px" :visible="true" />
+            <dx-load-indicator
+              v-if="loading"
+              width="24px"
+              height="24px"
+              :visible="true"
+            />
             <span v-if="!loading">Login</span>
           </span>
         </div>
@@ -59,9 +73,9 @@ import DxForm, {
   DxRequiredRule,
   DxLabel,
   DxButtonItem,
-  DxButtonOptions
+  DxButtonOptions,
 } from "devextreme-vue/form";
-import notify from 'devextreme/ui/notify';
+import notify from "devextreme/ui/notify";
 
 import auth from "@/auth";
 
@@ -69,12 +83,24 @@ export default {
   data() {
     return {
       formData: {},
-      loading: false
+      loading: false,
     };
   },
+  created() {
+    //Verificamos si el usuario recordo su userName
+    //si recordo agregamos el userName
+    let userName = localStorage.getItem("userName");
+
+    if (userName) {
+      this.formData = {
+        "user" : userName,
+        "rememberMe" : true
+      }
+    }
+  },
   methods: {
-    onSubmit: async function() {
-      const { user, password } = this.formData;
+    onSubmit: async function () {
+      const { user, password, rememberMe } = this.formData;
       this.loading = true;
 
       const result = await auth.logIn(user, password);
@@ -83,8 +109,9 @@ export default {
         notify(result.message, "error", 2000);
       } else {
         this.$router.push(this.$route.query.redirect || "/home");
+        auth.rememberUserName(rememberMe, user);
       }
-    }
+    },
   },
   components: {
     DxLoadIndicator,
@@ -93,8 +120,8 @@ export default {
     DxItem,
     DxLabel,
     DxButtonItem,
-    DxButtonOptions
-  }
+    DxButtonOptions,
+  },
 };
 </script>
 

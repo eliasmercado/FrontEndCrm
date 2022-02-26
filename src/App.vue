@@ -24,7 +24,7 @@ function getScreenSizeInfo() {
   return {
     isXSmall: screenSizes["screen-x-small"],
     isLarge: screenSizes["screen-large"],
-    cssClasses: Object.keys(screenSizes).filter(cl => screenSizes[cl])
+    cssClasses: Object.keys(screenSizes).filter((cl) => screenSizes[cl]),
   };
 }
 
@@ -33,18 +33,18 @@ export default {
   data() {
     return {
       title: "CRM",
-      screen: getScreenSizeInfo()
+      screen: getScreenSizeInfo(),
     };
   },
   computed: {
     cssClasses() {
       return ["app"].concat(this.screen.cssClasses);
-    }
+    },
   },
   methods: {
     screenSizeChanged() {
       this.screen = getScreenSizeInfo();
-    }
+    },
   },
 
   mounted() {

@@ -1,11 +1,14 @@
-import axios from "axios";
-
-const defaultUser = null;
+import api from "@/scripts/api"
 
 export default {
-  _user: defaultUser,
+  _user: null,
   loggedIn() {
-    return !!this._user;
+    let result = this.getUser();
+    this._user = result.data;
+    if (this._user === null || !result.isOk)
+      return false;
+
+    return true;
   },
 
   async logIn(user, password) {
@@ -16,9 +19,12 @@ export default {
 
     try {
       let result;
-      await axios.post("http://localhost:62870/api/login", data)
+
+      //Vamos a guardar en el sessionStorage la respuesta del login para usar en todo el programa
+      await api.post("/login", data)
         .then(response => {
-          this._user = { ...defaultUser, user };
+          this._user = response.data.data;
+          sessionStorage.setItem("user", JSON.stringify(this._user));
           result = {
             isOk: true,
             data: this._user
@@ -33,7 +39,8 @@ export default {
 
       return result;
     }
-    catch {
+    catch (err) {
+      console.warn(err)
       return {
         isOk: false,
         message: "Error inesperado en la autenticación"
@@ -41,17 +48,20 @@ export default {
     }
   },
 
-  async logOut() {
+  logOut() {
     this._user = null;
+    sessionStorage.removeItem("user");
   },
 
-  async getUser() {
+  getUser() {
     try {
-      // Send request
+      //Convertimos el string a un json para que el programa use los datos del usuario logueado
+      let userInfoStr = sessionStorage.getItem("user");
+      let user = JSON.parse(userInfoStr);
 
       return {
         isOk: true,
-        data: this._user
+        data: user
       };
     }
     catch {
@@ -77,4 +87,24 @@ export default {
       };
     }
   },
+
+  
+  getAutorizationToken() {
+      //Convertimos el string a un json
+      let userInfoStr = sessionStorage.getItem("user");
+      let user = JSON.parse(userInfoStr);
+
+      if (user === null)
+        return null;
+        
+      return user.token;
+  },
+
+  //para recordar el usuario en el login
+  rememberUserName(rememberMe, userName) {
+    if (rememberMe)
+      localStorage.setItem("userName", userName);
+    else
+      localStorage.removeItem("userName");
+  }
 };

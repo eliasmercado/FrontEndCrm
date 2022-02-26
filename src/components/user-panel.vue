@@ -4,7 +4,7 @@
       <div class="image-container">
         <div class="user-image" />
       </div>
-      <div class="user-name">{{user.user}}</div>
+      <div class="user-name">{{user.userName}}</div>
     </div>
 
     <dx-context-menu
@@ -40,7 +40,7 @@ export default {
     DxContextMenu,
     DxPosition,
     DxList
-  }
+  },
 };
 </script>
 
