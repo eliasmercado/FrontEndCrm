@@ -1,10 +1,7 @@
 import Vue from "vue";
 import Router from "vue-router";
-
 import auth from "./auth";
-
 import Home from "./views/home";
-
 import defaultLayout from "./layouts/master-layout";
 import simpleLayout from "./layouts/login-layout";
 
@@ -57,14 +54,11 @@ const router = new Router({
       redirect: "/home"
     },
     {
-      path: "/recovery",
-      redirect: "/home"
-    },
-    {
       path: "*",
       redirect: "/home"
     }
-  ]
+  ],
+  mode: "history"
 });
 
 router.beforeEach((to, from, next) => {
