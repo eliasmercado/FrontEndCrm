@@ -1,44 +1,67 @@
-const defaultUser = {
-  email: 'sandra@example.com',
-  avatarUrl: 'https://js.devexpress.com/Demos/WidgetsGallery/JSDemos/images/employees/06.png'
-};
+import api from "@/scripts/api"
 
 export default {
-  _user: defaultUser,
+  _user: null,
   loggedIn() {
-    return !!this._user;
+    let result = this.getUser();
+    this._user = result.data;
+    if (this._user === null || !result.isOk)
+      return false;
+
+    return true;
   },
 
-  async logIn(email, password) {
-    try {
-      // Send request
-      console.log(email, password);
-      this._user = { ...defaultUser, email };
+  async logIn(user, password) {
+    let data = {
+      userName: user,
+      password: password
+    };
 
-      return {
-        isOk: true,
-        data: this._user
-      };
+    try {
+      let result;
+
+      //Vamos a guardar en el sessionStorage la respuesta del login para usar en todo el programa
+      await api.post("/login", data)
+        .then(response => {
+          this._user = response.data.data;
+          sessionStorage.setItem("user", JSON.stringify(this._user));
+          result = {
+            isOk: true,
+            data: this._user
+          }
+        })
+        .catch(error => {
+          result = {
+            isOk: false,
+            message: error.response.data.error.message
+          };
+        })
+
+      return result;
     }
-    catch {
+    catch (err) {
+      console.warn(err)
       return {
         isOk: false,
-        message: "Authentication failed"
+        message: "Error inesperado en la autenticación"
       };
     }
   },
 
-  async logOut() {
+  logOut() {
     this._user = null;
+    sessionStorage.removeItem("user");
   },
 
-  async getUser() {
+  getUser() {
     try {
-      // Send request
+      //Convertimos el string a un json para que el programa use los datos del usuario logueado
+      let userInfoStr = sessionStorage.getItem("user");
+      let user = JSON.parse(userInfoStr);
 
       return {
         isOk: true,
-        data: this._user
+        data: user
       };
     }
     catch {
@@ -65,37 +88,23 @@ export default {
     }
   },
 
-  async changePassword(email, recoveryCode) {
-    try {
-      // Send request
-      console.log(email, recoveryCode);
+  
+  getAutorizationToken() {
+      //Convertimos el string a un json
+      let userInfoStr = sessionStorage.getItem("user");
+      let user = JSON.parse(userInfoStr);
 
-      return {
-        isOk: true
-      };
-    }
-    catch {
-      return {
-        isOk: false,
-        message: "Failed to change password"
-      }
-    }
+      if (user === null)
+        return null;
+        
+      return user.token;
   },
 
-  async createAccount(email, password) {
-    try {
-      // Send request
-      console.log(email, password);
-
-      return {
-        isOk: true
-      };
-    }
-    catch {
-      return {
-        isOk: false,
-        message: "Failed to create account"
-      };
-    }
+  //para recordar el usuario en el login
+  rememberUserName(rememberMe, userName) {
+    if (rememberMe)
+      localStorage.setItem("userName", userName);
+    else
+      localStorage.removeItem("userName");
   }
 };

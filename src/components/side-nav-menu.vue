@@ -19,43 +19,7 @@
 <script>
 import DxTreeView from "devextreme-vue/ui/tree-view";
 import { sizes } from "../utils/media-query";
-
-const navigation = [
-  {
-    text: "Home",
-    path: "/home",
-    icon: "home",
-  },
-  {
-    text: "Examples",
-    icon: "folder",
-    items: [
-      {
-        text: "Profile",
-        path: "/profile2",
-        items: [
-          {
-            text: "Profile2",
-            path: "/profile1",
-          },
-        ],
-      },
-      {
-        text: "Tasks",
-        path: "/tasks",
-      },
-    ],
-  },
-];
-
-const treeViewRef = "treeViewRef";
-const isLargeScreen = sizes()["screen-large"];
-const items = navigation.map((item) => {
-  if (item.path && !/^\//.test(item.path)) {
-    item.path = `/${item.path}`;
-  }
-  return { ...item, expanded: isLargeScreen };
-});
+import menu from "@/scripts/menu";
 
 export default {
   props: {
@@ -63,8 +27,10 @@ export default {
   },
   data() {
     return {
-      treeViewRef,
-      items,
+      items: [],
+      navigation: [],
+      treeViewRef: "treeViewRef",
+      isLargeScreen: sizes()["screen-large"],
     };
   },
   methods: {
@@ -77,7 +43,7 @@ export default {
         return;
       }
 
-      this.$router.push(e.itemData.path);
+      this.$router.push(e.itemData.path).catch(err => {});
 
       const pointerEvent = e.event;
       pointerEvent.stopPropagation();
@@ -91,9 +57,20 @@ export default {
       this.treeView.selectItem(this.$route.path);
       this.treeView.expandItem(this.$route.path);
     },
+
+    async loadMenu() {
+      this.navigation = await menu.loadMenuForUser(1);
+      this.items = this.navigation.map((item) => {
+        if (item.path && !/^\//.test(item.path)) {
+          item.path = `/${item.path}`;
+        }
+        return { ...item };
+      });
+    },
   },
-  mounted() {
-    this.treeView = this.$refs[treeViewRef] && this.$refs[treeViewRef].instance;
+  async mounted() {
+    await this.loadMenu();
+    this.treeView = this.$refs[this.treeViewRef] && this.$refs[this.treeViewRef].instance;
     this.updateSelection();
     if (this.compactMode) {
       this.treeView.collapseAll();

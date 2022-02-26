@@ -1,10 +1,7 @@
 import Vue from "vue";
 import Router from "vue-router";
-
 import auth from "./auth";
-
 import Home from "./views/home";
-
 import defaultLayout from "./layouts/master-layout";
 import simpleLayout from "./layouts/login-layout";
 
@@ -32,7 +29,7 @@ const router = new Router({
       },
       props: {
         layout: {
-          title: "Sign In"
+          title: "Iniciar Sesión"
         }
       }
     },
@@ -47,8 +44,8 @@ const router = new Router({
       },
       props: {
         layout: {
-          title: "Reset Password",
-          description: "Please enter the email address that you used to register, and we will send you a link to reset your password via Email."
+          title: "Resetear Contraseña",
+          description: "Ingrese la dirección de correo electrónico que tiene registrado y le enviaremos un enlace para restablecer su contraseña por correo electrónico."
         }
       }
     },
@@ -57,14 +54,11 @@ const router = new Router({
       redirect: "/home"
     },
     {
-      path: "/recovery",
-      redirect: "/home"
-    },
-    {
       path: "*",
       redirect: "/home"
     }
-  ]
+  ],
+  mode: "history"
 });
 
 router.beforeEach((to, from, next) => {

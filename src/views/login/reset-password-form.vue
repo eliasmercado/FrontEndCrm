@@ -23,7 +23,7 @@
       <dx-item>
         <template #default>
           <div class="login-link">
-            Return to <router-link to="/login">Sign In</router-link>
+            Voler a <router-link to="/login">Iniciar Sesión</router-link>
           </div>
         </template>
       </dx-item>
@@ -31,7 +31,7 @@
         <div>
           <span class="dx-button-text">
               <dx-load-indicator v-if="loading" width="24px" height="24px" :visible="true" />
-              <span v-if="!loading">Reset my password</span>
+              <span v-if="!loading">Resetar mi contraseña</span>
           </span>
         </div>
       </template>

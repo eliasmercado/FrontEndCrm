@@ -38,7 +38,7 @@
               height="100%"
               styling-mode="text"
             >
-              <user-panel :user="user" :menu-items="userMenuItems" menu-mode="context" />
+              <user-panel :user="user.data" :menu-items="userMenuItems" menu-mode="context" />
             </dx-button>
           </div>
         </template>
@@ -69,7 +69,7 @@ export default {
     logOutFunc: Function
   },
   created() {
-    auth.getUser().then((e) => this.user = e.data);
+    this.user = auth.getUser();
   },
   data() {
     return {
