@@ -2,6 +2,7 @@ import Vue from "vue";
 import Router from "vue-router";
 import auth from "./auth";
 import Home from "./views/home";
+import Contacts from "./views/contacts/contacts-form"
 import defaultLayout from "./layouts/master-layout";
 import simpleLayout from "./layouts/login-layout";
 
@@ -16,10 +17,24 @@ const router = new Router({
       components: {
         layout: defaultLayout,
         content: Home
+      },
+    },
+    {
+      path: "/contactos",
+      name: "contacts",
+      meta: { requiresAuth: true },
+      components: {
+        layout: defaultLayout,
+        content: Contacts
+      },
+      props: {
+        layout: {
+          title: "Contactos"
+        }
       }
     },
     {
-      path: "/login-form",
+      path: "/login",
       name: "login-form",
       meta: { requiresAuth: false },
       components: {

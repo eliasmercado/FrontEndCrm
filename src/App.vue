@@ -32,7 +32,7 @@ export default {
   name: "app",
   data() {
     return {
-      title: "CRM",
+      title: "Dashboard",
       screen: getScreenSizeInfo(),
     };
   },
