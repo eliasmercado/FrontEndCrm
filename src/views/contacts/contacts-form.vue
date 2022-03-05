@@ -10,10 +10,122 @@
       :show-borders="true"
       :row-alternation-enabled="true"
       :repaint-changes-only="true"
+      :column-hiding-enabled="true"
+      :column-auto-width="true"
       @row-updating="getJsonForUpdate"
     >
       <dx-paging :page-size="10" />
       <dx-pager :show-page-size-selector="true" :show-info="true" />
+
+      <!-- Columnas de la grilla -->
+      <dx-column
+        :calculate-cell-value="calculateCellValue"
+        caption="Nombre Completo"
+        :allow-sorting="false"
+        :hiding-priority="6"
+      />
+      <dx-column data-field="idContacto" :visible="false" />
+      <dx-column data-field="nombres" :visible="false" />
+      <dx-column data-field="apellidos" :visible="false" />
+      <dx-column
+        data-field="celular"
+        caption="Celular"
+        :allow-sorting="false"
+        :allowFiltering="false"
+        :hiding-priority="4"
+      />
+
+      <dx-column
+        data-field="email"
+        caption="Email"
+        :allowFiltering="false"
+        :allow-sorting="false"
+        :hiding-priority="1"
+      />
+      <dx-column
+        data-field="fechaNacimiento"
+        data-type="date"
+        :visible="false"
+      />
+      <dx-column
+        data-field="idEstadoCivil"
+        :visible="false"
+        caption="Estado Civil"
+      >
+        <dx-lookup
+          :data-source="civilStatusData"
+          value-expr="idEstadoCivil"
+          display-expr="estadoCivil"
+        />
+      </dx-column>
+      <dx-column
+        data-field="idTipoDocumento"
+        caption="Tipo Documento"
+        :allow-sorting="false"
+        :hiding-priority="2"
+      >
+        <dx-lookup
+          :data-source="documentsData"
+          value-expr="idTipoDocumento"
+          display-expr="tipoDocumento"
+        />
+      </dx-column>
+
+      <dx-column
+        data-field="documento"
+        caption="Documento"
+        :allow-sorting="false"
+        :hiding-priority="3"
+      />
+      <dx-column data-field="direccion" :visible="false" />
+      <dx-column data-field="idCiudad" :visible="false" caption="Ciudad">
+        <dx-lookup
+          :data-source="getFilteredCities"
+          value-expr="idCiudad"
+          display-expr="ciudad"
+        />
+      </dx-column>
+      <dx-column
+        :set-cell-value="setStateValue"
+        data-field="idDepartamento"
+        :visible="false"
+        caption="Departamento"
+      >
+        <dx-lookup
+          :data-source="stateData"
+          value-expr="idDepartamento"
+          display-expr="departamento"
+        />
+      </dx-column>
+      <dx-column
+        data-field="idActividadEconomica"
+        :visible="false"
+        caption="Actividad Económica"
+      >
+        <dx-lookup
+          :data-source="economicActivityData"
+          value-expr="idActividadEconomica"
+          display-expr="actividadEconomica"
+        />
+      </dx-column>
+      <dx-column data-field="nombreEmpresa" :visible="false" />
+      <dx-column data-field="direccionLaboral" :visible="false" />
+      <dx-column data-field="telefonoLaboral" :visible="false" />
+      <dx-column data-field="correoLaboral" :visible="false" />
+      <dx-column
+        data-field="idPropietario"
+        caption="Propietario"
+        :allow-sorting="false"
+        :hiding-priority="5"
+      >
+        <dx-lookup
+          :data-source="ownerData"
+          value-expr="idPropietario"
+          display-expr="propietario"
+        />
+      </dx-column>
+
+      <!-- Formulario de edicion -->
       <dx-editing
         :allow-updating="true"
         :allow-deleting="true"
@@ -38,8 +150,8 @@
             <dx-item data-field="idTipoDocumento" />
             <dx-item data-field="documento" />
             <dx-item data-field="direccion" />
-            <dx-item data-field="idCiudad" />
             <dx-item data-field="idDepartamento" />
+            <dx-item data-field="idCiudad" />
           </dx-item>
 
           <dx-item
@@ -65,77 +177,6 @@
           </dx-item>
         </dx-form>
       </dx-editing>
-
-      <dx-column
-        :calculate-cell-value="calculateCellValue"
-        caption="Nombre Completo"
-        :width="250"
-        :hiding-priority="8"
-        :allow-sorting="false"
-      />
-      <dx-column data-field="idContacto" :visible="false" />
-      <dx-column data-field="nombres" :visible="false" />
-      <dx-column data-field="apellidos" :visible="false" />
-      <dx-column
-        data-field="celular"
-        caption="Celular"
-        :width="120"
-        :allow-sorting="false"
-        :allowFiltering="false"
-      />
-
-      <dx-column
-        data-field="email"
-        caption="Email"
-        :width="250"
-        :allowFiltering="false"
-        :allow-sorting="false"
-      />
-      <dx-column
-        data-field="fechaNacimiento"
-        data-type="date"
-        :visible="false"
-      />
-      <dx-column data-field="idEstadoCivil" :visible="false" />
-      <dx-column
-        data-field="idTipoDocumento"
-        caption="Tipo Documento"
-        :allow-sorting="false"
-        :width="150"
-      >
-      </dx-column>
-      <!--    <dx-column
-        data-field="idTipoDocumento"
-        caption="Tipo Documento"
-        :allow-sorting="false"
-        :width="150"
-      >
-        <dx-lookup
-          :data-source="documentsTypes"
-          value-expr="idTipoDocumento"
-          display-expr="tipoDocumento"
-        />
-      </dx-column> -->
-
-      <dx-column
-        data-field="documento"
-        caption="Documento"
-        :width="150"
-        :allow-sorting="false"
-      />
-      <dx-column data-field="direccion" :visible="false" />
-      <dx-column data-field="idCiudad" :visible="false" />
-      <dx-column data-field="idDepartamento" :visible="false" />
-      <dx-column data-field="idActividadEconomica" :visible="false" />
-      <dx-column data-field="nombreEmpresa" :visible="false" />
-      <dx-column data-field="direccionLaboral" :visible="false" />
-      <dx-column data-field="telefonoLaboral" :visible="false" />
-      <dx-column data-field="correoLaboral" :visible="false" />
-      <dx-column
-        data-field="idPropietario"
-        caption="Propietario"
-        :allow-sorting="false"
-      />
     </dx-data-grid>
   </div>
 </template>
@@ -159,6 +200,30 @@ import auth from "@/auth";
 import CustomStore from "devextreme/data/custom_store";
 import { DxItem } from "devextreme-vue/form";
 
+const stateData = new CustomStore({
+  key: "Value",
+  loadMode: "raw",
+  load: () => sendRequest("/departamento"),
+});
+const cityData = new CustomStore({
+  key: "Value",
+  loadMode: "raw",
+  load: () => sendRequest("/ciudad"),
+});
+
+function sendRequest(url) {
+  let token = auth.getAuthorizationToken();
+
+  return api
+    .get(url, { headers: { Authorization: `Bearer ${token}` } })
+    .then((response) => {
+      return response.data.data;
+    })
+    .catch((error) => {
+      notify(error.response.data.error.message, "error", 2000);
+    });
+}
+
 export default {
   data() {
     return {
@@ -172,13 +237,37 @@ export default {
           key,
         }), */
       }),
-      documentsTypes: [{}],
-      editedItem: {}
+      documentsData: new CustomStore({
+        key: "Value",
+        loadMode: "raw",
+        load: () => this.sendRequest("/contacto/tipoDocumento"),
+      }),
+      civilStatusData: new CustomStore({
+        key: "Value",
+        loadMode: "raw",
+        load: () => this.sendRequest("/contacto/estadoCivil"),
+      }),
+      economicActivityData: new CustomStore({
+        key: "Value",
+        loadMode: "raw",
+        load: () => this.sendRequest("/contacto/actividadEconomica"),
+      }),
+      ownerData: new CustomStore({
+        key: "Value",
+        loadMode: "raw",
+        load: () => this.sendRequest("/propietario"),
+      }),
+      stateData,
+      cityData,
+      setStateValue(rowData, value) {
+        rowData.idCiudad = null;
+        this.defaultSetCellValue(rowData, value);
+      },
     };
   },
   methods: {
     sendRequest(url, method = "GET", data = {}) {
-      let token = auth.getAutorizationToken();
+      let token = auth.getAuthorizationToken();
 
       if (method === "GET") {
         return api
@@ -223,6 +312,13 @@ export default {
       //por eso reemplazamos el newData.
       e.newData = Object.assign({}, e.oldData, e.newData);
     },
+
+    getFilteredCities: (options) => ({
+      store: cityData,
+      filter: options.data
+        ? ["idDepartamento", "=", options.data.idDepartamento]
+        : null,
+    }),
   },
   created() {},
   components: {

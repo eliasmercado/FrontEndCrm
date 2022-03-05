@@ -4,7 +4,7 @@ import auth from '@/auth';
 
 export default {
     async loadMenuForUser(userId) {
-        let token = auth.getAutorizationToken();
+        let token = auth.getAuthorizationToken();
 
         let result;
         await api.get(`/menu/${userId}`, { 'headers': { 'Authorization': `Bearer ${token}` } })

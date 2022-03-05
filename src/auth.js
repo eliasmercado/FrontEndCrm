@@ -89,7 +89,7 @@ export default {
   },
 
   
-  getAutorizationToken() {
+  getAuthorizationToken() {
       //Convertimos el string a un json
       let userInfoStr = sessionStorage.getItem("user");
       let user = JSON.parse(userInfoStr);
