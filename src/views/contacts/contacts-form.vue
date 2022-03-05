@@ -12,6 +12,7 @@
       :repaint-changes-only="true"
       :column-hiding-enabled="true"
       :column-auto-width="true"
+      @init-new-row="initRow"
       @row-updating="getJsonForUpdate"
     >
       <dx-paging :page-size="10" />
@@ -25,15 +26,22 @@
         :hiding-priority="6"
       />
       <dx-column data-field="idContacto" :visible="false" />
-      <dx-column data-field="nombres" :visible="false" />
-      <dx-column data-field="apellidos" :visible="false" />
+      <dx-column data-field="nombres" :visible="false">
+        <dx-required-rule />
+      </dx-column>
+      <dx-column data-field="apellidos" :visible="false">
+        <dx-required-rule />
+      </dx-column>
       <dx-column
         data-field="celular"
         caption="Celular"
         :allow-sorting="false"
         :allowFiltering="false"
         :hiding-priority="4"
-      />
+        data-type="number"
+      >
+        <dx-required-rule />
+      </dx-column>
 
       <dx-column
         data-field="email"
@@ -41,17 +49,24 @@
         :allowFiltering="false"
         :allow-sorting="false"
         :hiding-priority="1"
-      />
+      >
+        <dx-email-rule />
+        <dx-required-rule />
+      </dx-column>
       <dx-column
         data-field="fechaNacimiento"
         data-type="date"
         :visible="false"
-      />
+        caption="Fecha de Nacimiento"
+      >
+        <dx-required-rule />
+      </dx-column>
       <dx-column
         data-field="idEstadoCivil"
         :visible="false"
         caption="Estado Civil"
       >
+        <dx-required-rule />
         <dx-lookup
           :data-source="civilStatusData"
           value-expr="idEstadoCivil"
@@ -60,10 +75,11 @@
       </dx-column>
       <dx-column
         data-field="idTipoDocumento"
-        caption="Tipo Documento"
+        caption="Tipo de Documento"
         :allow-sorting="false"
         :hiding-priority="2"
       >
+        <dx-required-rule />
         <dx-lookup
           :data-source="documentsData"
           value-expr="idTipoDocumento"
@@ -76,9 +92,14 @@
         caption="Documento"
         :allow-sorting="false"
         :hiding-priority="3"
-      />
-      <dx-column data-field="direccion" :visible="false" />
+      >
+        <dx-required-rule />
+      </dx-column>
+      <dx-column data-field="direccion" :visible="false">
+        <dx-required-rule />
+      </dx-column>
       <dx-column data-field="idCiudad" :visible="false" caption="Ciudad">
+        <dx-required-rule />
         <dx-lookup
           :data-source="getFilteredCities"
           value-expr="idCiudad"
@@ -91,6 +112,7 @@
         :visible="false"
         caption="Departamento"
       >
+        <dx-required-rule />
         <dx-lookup
           :data-source="stateData"
           value-expr="idDepartamento"
@@ -102,13 +124,18 @@
         :visible="false"
         caption="Actividad Económica"
       >
+        <dx-required-rule />
         <dx-lookup
           :data-source="economicActivityData"
           value-expr="idActividadEconomica"
           display-expr="actividadEconomica"
         />
       </dx-column>
-      <dx-column data-field="nombreEmpresa" :visible="false" />
+      <dx-column
+        data-field="nombreEmpresa"
+        :visible="false"
+        caption="Nombre de la Empresa"
+      />
       <dx-column data-field="direccionLaboral" :visible="false" />
       <dx-column data-field="telefonoLaboral" :visible="false" />
       <dx-column data-field="correoLaboral" :visible="false" />
@@ -118,6 +145,7 @@
         :allow-sorting="false"
         :hiding-priority="5"
       >
+        <dx-required-rule />
         <dx-lookup
           :data-source="ownerData"
           value-expr="idPropietario"
@@ -192,6 +220,9 @@ import DxDataGrid, {
   DxToolbar,
   DxForm,
   DxPopup,
+  DxRequiredRule,
+  DxEmailRule,
+  DxPatternRule,
 } from "devextreme-vue/data-grid";
 
 import api from "@/scripts/api";
@@ -233,9 +264,7 @@ export default {
         insert: (values) => this.sendRequest("/contacto", "POST", values),
         update: (key, values) =>
           this.sendRequest(`/contacto/${key}`, "PUT", values),
-        /*remove: (key) => this.sendRequest(`${URL}/DeleteOrder1`, 'DELETE', {
-          key,
-        }), */
+        remove: (key) => this.sendRequest(`/contacto/${key}`, "DELETE"),
       }),
       documentsData: new CustomStore({
         key: "Value",
@@ -284,6 +313,7 @@ export default {
         return api
           .post(url, data, { headers: { Authorization: `Bearer ${token}` } })
           .then((response) => {
+            notify(response.data.data, "success", 2000);
             return response.data.data;
           })
           .catch((error) => {
@@ -295,6 +325,19 @@ export default {
         return api
           .put(url, data, { headers: { Authorization: `Bearer ${token}` } })
           .then((response) => {
+            notify(response.data.data, "success", 2000);
+            return response.data.data;
+          })
+          .catch((error) => {
+            notify(error.response.data.error.message, "error", 2000);
+          });
+      }
+
+      if (method === "DELETE") {
+        return api
+          .delete(url, { headers: { Authorization: `Bearer ${token}` } })
+          .then((response) => {
+            notify(response.data.data, "success", 2000);
             return response.data.data;
           })
           .catch((error) => {
@@ -311,6 +354,10 @@ export default {
       //devextreme solo retorna el valor que se edito, pero para el back se necesita el json completo.
       //por eso reemplazamos el newData.
       e.newData = Object.assign({}, e.oldData, e.newData);
+    },
+
+    initRow(e) {
+      e.data.idPropietario = 1;
     },
 
     getFilteredCities: (options) => ({
@@ -333,6 +380,9 @@ export default {
     DxItem,
     DxForm,
     DxPopup,
+    DxRequiredRule,
+    DxEmailRule,
+    DxPatternRule,
   },
 };
 </script>

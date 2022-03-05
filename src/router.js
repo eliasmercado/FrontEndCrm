@@ -27,11 +27,6 @@ const router = new Router({
         layout: defaultLayout,
         content: Contacts
       },
-      props: {
-        layout: {
-          title: "Contactos"
-        }
-      }
     },
     {
       path: "/login",
