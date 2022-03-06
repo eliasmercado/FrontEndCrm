@@ -18,6 +18,7 @@
       @exporting="onExporting"
     >
       <dx-export :enabled="true" />
+      <dx-search-panel :visible="true" width="300"></dx-search-panel>
       <dx-paging :page-size="10" />
       <dx-pager :show-page-size-selector="true" :show-info="true" />
 
@@ -157,6 +158,11 @@
         />
       </dx-column>
 
+      <dx-toolbar>
+        <dx-grid-item name="searchPanel" location="before" />
+        <dx-grid-item name="addRowButton" show-text="always" />
+        <dx-grid-item name="exportButton" location="after" />
+      </dx-toolbar>
       <!-- Formulario de edicion -->
       <dx-editing
         :allow-updating="true"
@@ -166,7 +172,7 @@
         :use-icons="true"
         mode="popup"
       >
-        <dx-texts add-row="Agregar" /><dx-popup />
+        <dx-texts add-row="Agregar Contacto" /><dx-popup />
         <dx-form>
           <dx-item
             :col-count="3"
@@ -212,7 +218,11 @@
       </dx-editing>
 
       <dx-column type="buttons">
-        <dx-button icon="info" hint="Ver información" :on-click="showContactInfo" />
+        <dx-button
+          icon="info"
+          hint="Ver información"
+          :on-click="showContactInfo"
+        />
         <dx-button name="edit" />
         <dx-button name="delete" />
       </dx-column>
@@ -256,6 +266,7 @@ import DxDataGrid, {
   DxTexts,
   DxExport,
   DxButton,
+  DxItem as DxGridItem,
 } from "devextreme-vue/data-grid";
 import notify from "devextreme/ui/notify";
 import CustomStore from "devextreme/data/custom_store";
@@ -454,6 +465,7 @@ export default {
     DxTexts,
     DxExport,
     BackButton,
+    DxGridItem,
   },
 };
 </script>
