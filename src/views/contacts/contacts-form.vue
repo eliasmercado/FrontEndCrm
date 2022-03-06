@@ -13,10 +13,11 @@
       :repaint-changes-only="true"
       :column-hiding-enabled="true"
       :column-auto-width="true"
-      @row-dbl-click="showContactInfo"
       @init-new-row="initRow"
       @row-updating="getJsonForUpdate"
+      @exporting="onExporting"
     >
+      <dx-export :enabled="true" />
       <dx-paging :page-size="10" />
       <dx-pager :show-page-size-selector="true" :show-info="true" />
 
@@ -162,9 +163,10 @@
         :allow-deleting="true"
         :allow-adding="true"
         refresh-mode="full"
+        :use-icons="true"
         mode="popup"
       >
-        <dx-popup />
+        <dx-texts add-row="Agregar" /><dx-popup />
         <dx-form>
           <dx-item
             :col-count="3"
@@ -208,9 +210,15 @@
           </dx-item>
         </dx-form>
       </dx-editing>
+
+      <dx-column type="buttons">
+        <dx-button icon="info" hint="Ver información" :on-click="showContactInfo" />
+        <dx-button name="edit" />
+        <dx-button name="delete" />
+      </dx-column>
     </dx-data-grid>
 
-    <dx-button
+    <back-button
       icon="back"
       v-if="viewContactInfo"
       text="Volver"
@@ -243,12 +251,21 @@ import DxDataGrid, {
   DxPopup,
   DxRequiredRule,
   DxEmailRule,
+  DxSearchPanel,
   DxPatternRule,
+  DxTexts,
+  DxExport,
+  DxButton,
 } from "devextreme-vue/data-grid";
 import notify from "devextreme/ui/notify";
 import CustomStore from "devextreme/data/custom_store";
 import { DxItem } from "devextreme-vue/form";
-import DxButton from "devextreme-vue/button";
+import { DxButton as BackButton } from "devextreme-vue/button";
+import { Workbook } from "exceljs";
+import { saveAs } from "file-saver";
+// Our demo infrastructure requires us to use 'file-saver-es'.
+// We recommend that you use the official 'file-saver' package in your applications.
+import { exportDataGrid } from "devextreme/excel_exporter";
 import api from "@/scripts/api";
 import auth from "@/auth";
 import ContactInfo from "@/components/contacts/contact-info";
@@ -385,8 +402,27 @@ export default {
     },
 
     showContactInfo(e) {
-      this.contactInfo = e.data;
+      this.contactInfo = e.row.data;
       this.viewContactInfo = true;
+    },
+
+    onExporting(e) {
+      const workbook = new Workbook();
+      const worksheet = workbook.addWorksheet("Contactos");
+
+      exportDataGrid({
+        component: e.component,
+        worksheet,
+        autoFilterEnabled: true,
+      }).then(() => {
+        workbook.xlsx.writeBuffer().then((buffer) => {
+          saveAs(
+            new Blob([buffer], { type: "application/octet-stream" }),
+            "Contactos.xlsx"
+          );
+        });
+      });
+      e.cancel = true;
     },
 
     getFilteredCities: (options) => ({
@@ -414,6 +450,10 @@ export default {
     DxPatternRule,
     ContactInfo,
     DxButton,
+    DxSearchPanel,
+    DxTexts,
+    DxExport,
+    BackButton,
   },
 };
 </script>
