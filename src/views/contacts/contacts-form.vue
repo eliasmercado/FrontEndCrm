@@ -3,6 +3,7 @@
     <h2>Contactos</h2>
 
     <dx-data-grid
+      v-show="!viewContactInfo"
       class="dx-card wide-card"
       :data-source="contactsData"
       :show-column-lines="false"
@@ -12,6 +13,7 @@
       :repaint-changes-only="true"
       :column-hiding-enabled="true"
       :column-auto-width="true"
+      @row-dbl-click="showContactInfo"
       @init-new-row="initRow"
       @row-updating="getJsonForUpdate"
     >
@@ -38,7 +40,6 @@
         :allow-sorting="false"
         :allowFiltering="false"
         :hiding-priority="4"
-        data-type="number"
       >
         <dx-required-rule />
       </dx-column>
@@ -138,7 +139,9 @@
       />
       <dx-column data-field="direccionLaboral" :visible="false" />
       <dx-column data-field="telefonoLaboral" :visible="false" />
-      <dx-column data-field="correoLaboral" :visible="false" />
+      <dx-column data-field="correoLaboral" :visible="false">
+        <dx-email-rule />
+      </dx-column>
       <dx-column
         data-field="idPropietario"
         caption="Propietario"
@@ -206,6 +209,16 @@
         </dx-form>
       </dx-editing>
     </dx-data-grid>
+
+    <dx-button
+      icon="back"
+      v-if="viewContactInfo"
+      text="Volver"
+      @click="viewContactInfo = false"
+    />
+    <br />
+    <br />
+    <contact-info :contact-info="contactInfo" v-if="viewContactInfo" />
   </div>
 </template>
 
@@ -224,12 +237,13 @@ import DxDataGrid, {
   DxEmailRule,
   DxPatternRule,
 } from "devextreme-vue/data-grid";
-
-import api from "@/scripts/api";
 import notify from "devextreme/ui/notify";
-import auth from "@/auth";
 import CustomStore from "devextreme/data/custom_store";
 import { DxItem } from "devextreme-vue/form";
+import DxButton from "devextreme-vue/button";
+import api from "@/scripts/api";
+import auth from "@/auth";
+import ContactInfo from "@/components/contacts/contact-info";
 
 const stateData = new CustomStore({
   key: "Value",
@@ -292,6 +306,8 @@ export default {
         rowData.idCiudad = null;
         this.defaultSetCellValue(rowData, value);
       },
+      viewContactInfo: false,
+      contactInfo: {},
     };
   },
   methods: {
@@ -360,6 +376,11 @@ export default {
       e.data.idPropietario = 1;
     },
 
+    showContactInfo(e) {
+      this.contactInfo = e.data;
+      this.viewContactInfo = true;
+    },
+
     getFilteredCities: (options) => ({
       store: cityData,
       filter: options.data
@@ -383,6 +404,8 @@ export default {
     DxRequiredRule,
     DxEmailRule,
     DxPatternRule,
+    ContactInfo,
+    DxButton,
   },
 };
 </script>
