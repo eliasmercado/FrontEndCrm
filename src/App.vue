@@ -3,7 +3,6 @@
     <div :class="cssClasses">
       <router-view
         name="layout"
-        :title="title"
         :is-x-small="screen.isXSmall"
         :is-large="screen.isLarge"
       >
@@ -32,7 +31,6 @@ export default {
   name: "app",
   data() {
     return {
-      title: "Dashboard",
       screen: getScreenSizeInfo(),
     };
   },
