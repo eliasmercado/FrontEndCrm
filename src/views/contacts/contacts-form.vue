@@ -218,7 +218,15 @@
     />
     <br />
     <br />
-    <contact-info :contact-info="contactInfo" v-if="viewContactInfo" />
+    <contact-info
+      :contact-info="contactInfo"
+      :cities="cityData.__rawData"
+      :states="stateData.__rawData"
+      :documentsType="documentsData.__rawData"
+      :civilStatus="civilStatusData.__rawData"
+      :economicActivity="economicActivityData.__rawData"
+      v-if="viewContactInfo"
+    />
   </div>
 </template>
 

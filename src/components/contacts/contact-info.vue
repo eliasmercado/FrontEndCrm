@@ -31,7 +31,7 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="contactInfo.idTipoDocumento"
+              :value="getDocumentType(contactInfo.idTipoDocumento)"
             />
           </div>
         </template>
@@ -53,7 +53,7 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="contactInfo.idEstadoCivil"
+              :value="getCivilStatusName(contactInfo.idEstadoCivil)"
             />
           </div>
         </template>
@@ -64,7 +64,7 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="contactInfo.idDepartamento"
+              :value="getStateName(contactInfo.idDepartamento)"
             />
           </div>
         </template>
@@ -75,7 +75,7 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="contactInfo.idCiudad"
+              :value="getStateName(contactInfo.idCiudad)"
             />
           </div>
         </template>
@@ -97,7 +97,7 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="contactInfo.idActividadEconomica"
+              :value="getEconomicActivityName(contactInfo.idActividadEconomica)"
             />
           </div>
         </template>
@@ -324,9 +324,70 @@ export default {
     showEmailInfo() {
       this.popupEmailVisible = true;
     },
+
+    getDocumentType(documentTypeId) {
+      //creamos una clave id para usar un solo metodo comun para todos
+      this.documentsType.forEach((element) => {
+        element.id = element.idTipoDocumento;
+      });
+      var item = this.searchItemById(this.documentsType, documentTypeId);
+
+      return item.tipoDocumento;
+    },
+
+    getStateName(stateId) {
+      //creamos una clave id para usar un solo metodo comun para todos
+      this.states.forEach((element) => {
+        element.id = element.idDepartamento;
+      });
+      var item = this.searchItemById(this.states, stateId);
+
+      return item.departamento;
+    },
+
+    getCityName(cityId) {
+      //creamos una clave id para usar un solo metodo comun para todos
+      this.cities.forEach((element) => {
+        element.id = element.idCiudad;
+      });
+      var item = this.searchItemById(this.cities, cityId);
+
+      return item.ciudad;
+    },
+
+    getCivilStatusName(civilStatusId) {
+      //creamos una clave id para usar un solo metodo comun para todos
+      this.civilStatus.forEach((element) => {
+        element.id = element.idEstadoCivil;
+      });
+      var item = this.searchItemById(this.civilStatus, civilStatusId);
+
+      return item.estadoCivil;
+    },
+
+    getEconomicActivityName(economicActivityId) {
+      //creamos una clave id para usar un solo metodo comun para todos
+      this.economicActivity.forEach((element) => {
+        element.id = element.idActividadEconomica;
+      });
+      var item = this.searchItemById(this.economicActivity, economicActivityId);
+
+      return item.actividadEconomica;
+    },
+    searchItemById(items, id) {
+      return items.find(function (item) {
+        return item.id === id;
+      });
+    },
   },
+
   props: {
     contactInfo: Object,
+    cities: Array,
+    states: Array,
+    documentsType: Array,
+    civilStatus: Array,
+    economicActivity: Array,
   },
   components: {
     DxForm,
