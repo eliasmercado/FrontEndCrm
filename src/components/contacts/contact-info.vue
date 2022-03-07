@@ -208,8 +208,8 @@
         :drag-enabled="false"
         :show-close-button="false"
         :show-title="false"
-        :width="300"
-        :height="280"
+        :width="400"
+        :height="460"
         container=".dx-viewport"
         title="Information"
       >
@@ -231,7 +231,36 @@
           location="after"
           :options="closeCallButtonOptions"
         />
-        <p>Modo Beta</p>
+        <dx-text-box
+          v-model="callData.phoneNumber"
+          label-mode="static"
+          styling-mode="underlined"
+          label="Celular"
+        />
+        <br />
+        <dx-date-box
+          v-model="callData.callDate"
+          type="datetime"
+          label-mode="static"
+          styling-mode="underlined"
+          label="Fecha de llamada"
+        />
+        <br />
+        <dx-text-box
+          v-model="callData.callReason"
+          label-mode="static"
+          styling-mode="underlined"
+          label="Motivo de llamada"
+        />
+        <br />
+        <dx-text-area
+          v-model="callData.observations"
+          label-mode="static"
+          styling-mode="underlined"
+          label="Observaciones"
+          :height="200"
+          :max-length="500"
+        />
       </dx-popup>
 
       <dx-popup
@@ -240,8 +269,8 @@
         :drag-enabled="false"
         :show-close-button="false"
         :show-title="false"
-        :width="300"
-        :height="280"
+        :width="400"
+        :height="500"
         container=".dx-viewport"
         title="Information"
       >
@@ -263,7 +292,37 @@
           location="after"
           :options="closeEmailButtonOptions"
         />
-        <p>Modo Beta</p>
+        <dx-tag-box
+          label-mode="static"
+          styling-mode="underlined"
+          label="Para"
+          v-model="emailData.to"
+          :accept-custom-value="true"
+        />
+        <br />
+        <dx-tag-box
+          label-mode="static"
+          styling-mode="underlined"
+          label="CC"
+          v-model="emailData.cc"
+          :accept-custom-value="true"
+        />
+        <br />
+        <dx-text-box
+          v-model="emailData.subject"
+          label-mode="static"
+          styling-mode="underlined"
+          label="Asunto"
+        />
+        <br />
+        <dx-text-area
+          v-model="emailData.message"
+          label-mode="static"
+          styling-mode="underlined"
+          label="Mensaje"
+          :height="200"
+          :max-length="500"
+        />
       </dx-popup>
     </div>
   </div>
@@ -276,11 +335,15 @@ import {
   DxTabbedItem,
   DxTabPanelOptions,
   DxTab,
+  DxLabel,
 } from "devextreme-vue/form";
 import { DxPopup, DxPosition, DxToolbarItem } from "devextreme-vue/popup";
 import DxTextBox from "devextreme-vue/text-box";
 import DxDateBox from "devextreme-vue/date-box";
 import DxButton from "devextreme-vue/button";
+import DxTagBox from "devextreme-vue/tag-box";
+import DxTextArea from "devextreme-vue/text-area";
+import notify from "devextreme/ui/notify";
 
 export default {
   data() {
@@ -288,6 +351,18 @@ export default {
       popupCallVisible: false,
       popupEmailVisible: false,
       positionOf: "",
+      emailData: {
+        to: [this.contactInfo.email],
+        cc: [],
+        subject: null,
+        message: null,
+      },
+      callData: {
+        phoneNumber: this.contactInfo.celular,
+        callDate: new Date(),
+        callReason: null,
+        observations: null,
+      },
       closeCallButtonOptions: {
         text: "Cancelar",
         onClick: () => {
@@ -297,8 +372,8 @@ export default {
       sendCallButtonOptions: {
         text: "Registrar",
         onClick: () => {
+          notify("La llamada se ha registrado correctamente.", "success", 2000);
           this.popupCallVisible = false;
-          console.log("Registrar");
         },
       },
       closeEmailButtonOptions: {
@@ -310,8 +385,8 @@ export default {
       sendEmailButtonOptions: {
         text: "Enviar Correo",
         onClick: () => {
+          notify("El correo se ha enviado correctamente.", "success", 2000);
           this.popupEmailVisible = false;
-          console.log("Enviar Correo");
         },
       },
     };
@@ -374,6 +449,7 @@ export default {
 
       return item.actividadEconomica;
     },
+
     searchItemById(items, id) {
       return items.find(function (item) {
         return item.id === id;
@@ -402,6 +478,9 @@ export default {
     DxPopup,
     DxPosition,
     DxToolbarItem,
+    DxLabel,
+    DxTagBox,
+    DxTextArea,
   },
 };
 </script>

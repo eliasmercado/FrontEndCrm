@@ -18,7 +18,7 @@
       @exporting="onExporting"
     >
       <dx-export :enabled="true" />
-      <dx-search-panel :visible="true" width="300"></dx-search-panel>
+      <dx-search-panel :visible="true" :width="300"></dx-search-panel>
       <dx-paging :page-size="10" />
       <dx-pager :show-page-size-selector="true" :show-info="true" />
 
