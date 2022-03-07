@@ -40,7 +40,6 @@ export default {
       return result;
     }
     catch (err) {
-      console.warn(err)
       return {
         isOk: false,
         message: "Error inesperado en la autenticación"

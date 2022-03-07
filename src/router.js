@@ -3,6 +3,7 @@ import Router from "vue-router";
 import auth from "./auth";
 import Home from "./views/home";
 import Contacts from "./views/contacts/contacts-form"
+import Company from "./views/contacts/company-form"
 import defaultLayout from "./layouts/master-layout";
 import simpleLayout from "./layouts/login-layout";
 
@@ -26,6 +27,15 @@ const router = new Router({
       components: {
         layout: defaultLayout,
         content: Contacts
+      },
+    },
+    {
+      path: "/empresas",
+      name: "company",
+      meta: { requiresAuth: true },
+      components: {
+        layout: defaultLayout,
+        content: Company
       },
     },
     {
