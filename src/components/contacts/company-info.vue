@@ -1,7 +1,7 @@
 <template>
   <div>
     <div id="form-container">
-      <dx-form id="form" :col-count="2" :form-data="contactInfo">
+      <dx-form id="form" :col-count="2" :form-data="companyInfo">
         <template #nameTemplate>
           <div>
             <div>Nombre</div>
@@ -9,29 +9,7 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="contactInfo.nombres + ' ' + contactInfo.apellidos"
-            />
-          </div>
-        </template>
-        <template #birthDateTemplate>
-          <div>
-            <div>Fecha de Nacimiento</div>
-            <dx-date-box
-              styling-mode="underlined"
-              :read-only="true"
-              type="date"
-              :value="contactInfo.fechaNacimiento"
-            />
-          </div>
-        </template>
-        <template #documentTypeTemplate>
-          <div>
-            <div>Tipo de Documento</div>
-            <dx-text-box
-              :read-only="true"
-              :hover-state-enabled="false"
-              styling-mode="underlined"
-              :value="getDocumentType(contactInfo.idTipoDocumento)"
+              :value="companyInfo.nombre"
             />
           </div>
         </template>
@@ -42,18 +20,7 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="contactInfo.documento"
-            />
-          </div>
-        </template>
-        <template #civilStatusTemplate>
-          <div>
-            <div>Estado Civil</div>
-            <dx-text-box
-              :read-only="true"
-              :hover-state-enabled="false"
-              styling-mode="underlined"
-              :value="getCivilStatusName(contactInfo.idEstadoCivil)"
+              :value="companyInfo.ruc"
             />
           </div>
         </template>
@@ -64,7 +31,7 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="getStateName(contactInfo.idDepartamento)"
+              :value="getStateName(companyInfo.idDepartamento)"
             />
           </div>
         </template>
@@ -75,7 +42,7 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="getCityName(contactInfo.idCiudad)"
+              :value="getCityName(companyInfo.idCiudad)"
             />
           </div>
         </template>
@@ -86,62 +53,29 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="contactInfo.direccion"
+              :value="companyInfo.direccion"
             />
           </div>
         </template>
-        <template #economicActivityTemplate>
+        <template #representativeNameTemplate>
           <div>
-            <div>Acitividad Económica</div>
+            <div>Nombre</div>
             <dx-text-box
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="getEconomicActivityName(contactInfo.idActividadEconomica)"
+              :value="companyInfo.nombreRepresentante"
             />
           </div>
         </template>
-        <template #companyNameTemplate>
+        <template #representativePhoneTemplate>
           <div>
-            <div>Acitividad Económica</div>
+            <div>Celular</div>
             <dx-text-box
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="contactInfo.nombreEmpresa"
-            />
-          </div>
-        </template>
-        <template #companyAddressTemplate>
-          <div>
-            <div>Dirección Laboral</div>
-            <dx-text-box
-              :read-only="true"
-              :hover-state-enabled="false"
-              styling-mode="underlined"
-              :value="contactInfo.direccionLaboral"
-            />
-          </div>
-        </template>
-        <template #companyPhoneTemplate>
-          <div>
-            <div>Teléfono laboral</div>
-            <dx-text-box
-              :read-only="true"
-              :hover-state-enabled="false"
-              styling-mode="underlined"
-              :value="contactInfo.telefonoLaboral"
-            />
-          </div>
-        </template>
-        <template #companyEmailTemplate>
-          <div>
-            <div>Correo Laboral</div>
-            <dx-text-box
-              :read-only="true"
-              :hover-state-enabled="false"
-              styling-mode="underlined"
-              :value="contactInfo.correoLaboral"
+              :value="companyInfo.celularRepresentante"
             />
           </div>
         </template>
@@ -152,7 +86,7 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="contactInfo.celular"
+              :value="companyInfo.celular"
             />
             <dx-button id="buttonCall" icon="tel" @click="showCallInfo" />
           </div>
@@ -164,30 +98,24 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="contactInfo.email"
+              :value="companyInfo.email"
             />
             <dx-button id="buttonEmail" icon="email" @click="showEmailInfo" />
           </div>
         </template>
         <dx-group-item>
-          <dx-group-item caption="Datos Básicos" :col-count="3">
+          <dx-group-item caption="Datos Básicos" :col-count="2">
             <dx-simple-item template="nameTemplate" />
-            <dx-simple-item template="birthDateTemplate" />
-            <dx-simple-item template="documentTypeTemplate" />
             <dx-simple-item template="documentTemplate" />
-            <dx-simple-item template="civilStatusTemplate" />
           </dx-group-item>
-          <dx-group-item caption="Dirección de la casa" :col-count="3">
+          <dx-group-item caption="Dirección de la empresa" :col-count="3">
             <dx-simple-item template="stateTemplate" />
             <dx-simple-item template="cityTemplate" />
             <dx-simple-item template="addressTemplate" />
           </dx-group-item>
-          <dx-group-item caption="Datos Laborales" :col-count="3">
-            <dx-simple-item template="economicActivityTemplate" />
-            <dx-simple-item template="companyNameTemplate" />
-            <dx-simple-item template="companyAddressTemplate" />
-            <dx-simple-item template="companyPhoneTemplate" />
-            <dx-simple-item template="companyEmailTemplate" />
+          <dx-group-item caption="Datos del Representante" :col-count="2">
+            <dx-simple-item template="representativeNameTemplate" />
+            <dx-simple-item template="representativePhoneTemplate" />
           </dx-group-item>
           <dx-group-item caption="Información de Contactos">
             <dx-tabbed-item>
@@ -354,13 +282,13 @@ export default {
       popupEmailVisible: false,
       positionOf: "",
       emailData: {
-        to: [this.contactInfo.email],
+        to: [this.companyInfo.email],
         cc: [],
         subject: null,
         message: null,
       },
       callData: {
-        phoneNumber: this.contactInfo.celular,
+        phoneNumber: this.companyInfo.celular,
         callDate: new Date(),
         callReason: null,
         observations: null,
@@ -402,16 +330,6 @@ export default {
       this.popupEmailVisible = true;
     },
 
-    getDocumentType(documentTypeId) {
-      //creamos una clave id para usar un solo metodo comun para todos
-      this.documentsType.forEach((element) => {
-        element.id = element.idTipoDocumento;
-      });
-      var item = this.searchItemById(this.documentsType, documentTypeId);
-
-      return item.tipoDocumento;
-    },
-
     getStateName(stateId) {
       //creamos una clave id para usar un solo metodo comun para todos
       this.states.forEach((element) => {
@@ -432,26 +350,6 @@ export default {
       return item.ciudad;
     },
 
-    getCivilStatusName(civilStatusId) {
-      //creamos una clave id para usar un solo metodo comun para todos
-      this.civilStatus.forEach((element) => {
-        element.id = element.idEstadoCivil;
-      });
-      var item = this.searchItemById(this.civilStatus, civilStatusId);
-
-      return item.estadoCivil;
-    },
-
-    getEconomicActivityName(economicActivityId) {
-      //creamos una clave id para usar un solo metodo comun para todos
-      this.economicActivity.forEach((element) => {
-        element.id = element.idActividadEconomica;
-      });
-      var item = this.searchItemById(this.economicActivity, economicActivityId);
-
-      return item.actividadEconomica;
-    },
-
     searchItemById(items, id) {
       return items.find(function (item) {
         return item.id === id;
@@ -460,12 +358,9 @@ export default {
   },
 
   props: {
-    contactInfo: Object,
+    companyInfo: Object,
     cities: Array,
     states: Array,
-    documentsType: Array,
-    civilStatus: Array,
-    economicActivity: Array,
   },
   components: {
     DxForm,

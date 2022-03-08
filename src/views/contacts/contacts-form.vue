@@ -274,8 +274,6 @@ import { DxItem } from "devextreme-vue/form";
 import { DxButton as BackButton } from "devextreme-vue/button";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver";
-// Our demo infrastructure requires us to use 'file-saver-es'.
-// We recommend that you use the official 'file-saver' package in your applications.
 import { exportDataGrid } from "devextreme/excel_exporter";
 import api from "@/scripts/api";
 import auth from "@/auth";
