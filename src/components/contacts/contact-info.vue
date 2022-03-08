@@ -272,17 +272,10 @@
         :drag-enabled="false"
         :show-close-button="false"
         :show-title="false"
-        :width="400"
-        :height="500"
         container=".dx-viewport"
         title="Information"
       >
-        <dx-position
-          v-model="popupEmailVisible"
-          at="right"
-          my="bottom"
-          of="#buttonEmail"
-        />
+        <dx-position v-model="popupEmailVisible" at="center" my="center" />
         <dx-toolbar-item
           widget="dxButton"
           toolbar="bottom"
@@ -295,20 +288,12 @@
           location="after"
           :options="closeEmailButtonOptions"
         />
-        <dx-tag-box
+        <dx-text-box
+          v-model="emailData.to"
           label-mode="static"
           styling-mode="underlined"
           label="Para"
-          v-model="emailData.to"
-          :accept-custom-value="true"
-        />
-        <br />
-        <dx-tag-box
-          label-mode="static"
-          styling-mode="underlined"
-          label="CC"
-          v-model="emailData.cc"
-          :accept-custom-value="true"
+          :read-only="true"
         />
         <br />
         <dx-text-box
@@ -318,14 +303,35 @@
           label="Asunto"
         />
         <br />
-        <dx-text-area
-          v-model="emailData.message"
-          label-mode="static"
-          styling-mode="underlined"
-          label="Mensaje"
-          :height="200"
-          :max-length="500"
-        />
+        <dx-html-editor
+          v-model="emailData.emailContent"
+          value-type="HTML"
+          :height="550"
+        >
+          <dx-toolbar>
+            <dx-item name="undo" />
+            <dx-item name="redo" />
+            <dx-item name="separator" />
+            <dx-item :accepted-values="sizeValues" name="size" />
+            <dx-item :accepted-values="fontValues" name="font" />
+            <dx-item name="separator" />
+            <dx-item name="bold" />
+            <dx-item name="italic" />
+            <dx-item name="strike" />
+            <dx-item name="underline" />
+            <dx-item name="separator" />
+            <dx-item name="link" />
+            <dx-item name="separator" />
+            <dx-item name="alignLeft" />
+            <dx-item name="alignCenter" />
+            <dx-item name="alignRight" />
+            <dx-item name="alignJustify" />
+            <dx-item name="separator" />
+            <dx-item name="orderedList" />
+            <dx-item name="bulletList" />
+            <dx-item name="separator" />
+          </dx-toolbar>
+        </dx-html-editor>
       </dx-popup>
     </div>
   </div>
@@ -340,6 +346,7 @@ import {
   DxTab,
   DxLabel,
 } from "devextreme-vue/form";
+import { DxHtmlEditor, DxToolbar, DxItem } from "devextreme-vue/html-editor";
 import { DxPopup, DxPosition, DxToolbarItem } from "devextreme-vue/popup";
 import DxTextBox from "devextreme-vue/text-box";
 import DxDateBox from "devextreme-vue/date-box";
@@ -353,14 +360,25 @@ import api from "@/scripts/api";
 export default {
   data() {
     return {
+      headerValues: [false, 1, 2, 3, 4, 5],
+      sizeValues: ["8pt", "10pt", "12pt", "14pt", "18pt", "24pt", "36pt"],
+      fontValues: [
+        "Arial",
+        "Courier New",
+        "Georgia",
+        "Impact",
+        "Lucida Console",
+        "Tahoma",
+        "Times New Roman",
+        "Verdana",
+      ],
       popupCallVisible: false,
       popupEmailVisible: false,
       positionOf: "",
       emailData: {
-        to: [this.contactInfo.email],
-        cc: [],
-        subject: null,
-        message: null,
+        to: this.contactInfo.email,
+        subject: "",
+        emailContent: "",
       },
       callData: {
         phoneNumber: this.contactInfo.celular,
@@ -410,7 +428,22 @@ export default {
       sendEmailButtonOptions: {
         text: "Enviar Correo",
         onClick: () => {
-          notify("El correo se ha enviado correctamente.", "success", 2000);
+          var data = {
+            idContacto: this.contactInfo.idContacto,
+            motivoComunicacion: this.emailData.subject,
+            referencia: this.emailData.to,
+            contenidoEmail: this.emailData.emailContent,
+            idUsuario: auth.getUser().data.idUsuario,
+          };
+
+          this.sendRequest("/comunicacion/correo", data);
+
+          //volvemos al valor por default
+          this.emailData = {
+            to: this.contactInfo.email,
+            subject: "",
+            emailContent: "",
+          };
           this.popupEmailVisible = false;
         },
       },
@@ -427,7 +460,7 @@ export default {
           notify(response.data.data, "success", 2000);
         })
         .catch((error) => {
-          notify("Error al registrar la llamada", "error", 2000);
+          notify("Error inesperado al realizar la acción.", "error", 2000);
         });
 
       return result;
@@ -522,9 +555,24 @@ export default {
     DxLabel,
     DxTagBox,
     DxTextArea,
+    DxHtmlEditor,
+    DxToolbar,
+    DxItem,
   },
 };
 </script>
 
 <style>
+.dx-htmleditor-content img {
+  vertical-align: middle;
+  padding-right: 10px;
+}
+
+.value-content {
+  margin-top: 20px;
+  overflow: auto;
+  height: 110px;
+  width: 100%;
+  white-space: pre-wrap;
+}
 </style>
