@@ -234,6 +234,7 @@
           :options="closeCallButtonOptions"
         />
         <dx-text-box
+          :read-only="true"
           v-model="callData.phoneNumber"
           label-mode="static"
           styling-mode="underlined"
@@ -261,7 +262,7 @@
           styling-mode="underlined"
           label="Observaciones"
           :height="200"
-          :max-length="500"
+          :max-length="200"
         />
       </dx-popup>
 
@@ -346,6 +347,8 @@ import DxButton from "devextreme-vue/button";
 import DxTagBox from "devextreme-vue/tag-box";
 import DxTextArea from "devextreme-vue/text-area";
 import notify from "devextreme/ui/notify";
+import auth from "@/auth";
+import api from "@/scripts/api";
 
 export default {
   data() {
@@ -372,9 +375,29 @@ export default {
         },
       },
       sendCallButtonOptions: {
+        useSubmitBehavior: true,
         text: "Registrar",
         onClick: () => {
-          notify("La llamada se ha registrado correctamente.", "success", 2000);
+          var data = {
+            idContacto: this.contactInfo.idContacto,
+            motivoComunicacion: !this.callData.callReason
+              ? "Sin Motivo"
+              : this.callData.callReason,
+            observacion: this.callData.observations,
+            idUsuario: auth.getUser().data.idUsuario,
+            referencia: this.callData.phoneNumber,
+            fechaComunicacion: this.callData.callDate,
+          };
+
+          this.sendRequest("/comunicacion/llamada", data);
+
+          //Volvemos a un valor por default
+          this.callData = {
+            phoneNumber: this.contactInfo.celular,
+            callDate: new Date(),
+            callReason: null,
+            observations: null,
+          };
           this.popupCallVisible = false;
         },
       },
@@ -394,6 +417,22 @@ export default {
     };
   },
   methods: {
+    async sendRequest(url, data = {}) {
+      let token = auth.getAuthorizationToken();
+      let result;
+
+      await api
+        .post(url, data, { headers: { Authorization: `Bearer ${token}` } })
+        .then((response) => {
+          notify(response.data.data, "success", 2000);
+        })
+        .catch((error) => {
+          notify("Error al registrar la llamada", "error", 2000);
+        });
+
+      return result;
+    },
+
     showCallInfo() {
       this.popupCallVisible = true;
     },

@@ -86,7 +86,6 @@ export default {
       };
     }
   },
-
   
   getAuthorizationToken() {
       //Convertimos el string a un json
