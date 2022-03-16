@@ -306,7 +306,7 @@
         <dx-html-editor
           v-model="emailData.emailContent"
           value-type="HTML"
-          :height="550"
+          :height="400"
         >
           <dx-toolbar>
             <dx-item name="undo" />

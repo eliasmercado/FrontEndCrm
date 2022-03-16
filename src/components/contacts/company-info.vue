@@ -79,7 +79,7 @@
             />
           </div>
         </template>
-        <template #phoneTemplate>
+        <template #cellPhoneTemplate>
           <div class="row">
             <dx-text-box
               style="width: 300px"
@@ -89,6 +89,18 @@
               :value="companyInfo.celular"
             />
             <dx-button id="buttonCall" icon="tel" @click="showCallInfo" />
+          </div>
+        </template>
+        <template #phoneTemplate>
+          <div class="row">
+            <dx-text-box
+              style="width: 300px"
+              :read-only="true"
+              :hover-state-enabled="false"
+              styling-mode="underlined"
+              :value="companyInfo.telefono"
+            />
+            <dx-button id="buttonCallPhone" icon="tel" @click="showCallPhoneInfo" />
           </div>
         </template>
         <template #emailTemplate>
@@ -121,6 +133,9 @@
             <dx-tabbed-item>
               <dx-tab-panel-options :defer-rendering="false" />
               <dx-tab title="Celular">
+                <dx-simple-item template="cellPhoneTemplate" />
+              </dx-tab>
+              <dx-tab title="Teléfono">
                 <dx-simple-item template="phoneTemplate" />
               </dx-tab>
               <dx-tab title="Email">
@@ -162,6 +177,7 @@
           :options="closeCallButtonOptions"
         />
         <dx-text-box
+          :read-only="true"
           v-model="callData.phoneNumber"
           label-mode="static"
           styling-mode="underlined"
@@ -189,7 +205,69 @@
           styling-mode="underlined"
           label="Observaciones"
           :height="200"
-          :max-length="500"
+          :max-length="200"
+        />
+      </dx-popup>
+
+      <dx-popup
+        v-model="popupCallPhoneVisible"
+        :visible="popupCallPhoneVisible"
+        :drag-enabled="false"
+        :show-close-button="false"
+        :show-title="false"
+        :width="400"
+        :height="460"
+        container=".dx-viewport"
+        title="Information"
+      >
+        <dx-position
+          v-model="popupCallPhoneVisible"
+          at="right"
+          my="bottom"
+          of="#buttonCallPhone"
+        />
+        <dx-toolbar-item
+          widget="dxButton"
+          toolbar="bottom"
+          location="after"
+          :options="sendCallPhoneButtonOptions"
+        />
+        <dx-toolbar-item
+          widget="dxButton"
+          toolbar="bottom"
+          location="after"
+          :options="closeCallPhoneButtonOptions"
+        />
+        <dx-text-box
+          :read-only="true"
+          v-model="callPhoneData.phoneNumber"
+          label-mode="static"
+          styling-mode="underlined"
+          label="Celular"
+        />
+        <br />
+        <dx-date-box
+          v-model="callPhoneData.callDate"
+          type="datetime"
+          label-mode="static"
+          styling-mode="underlined"
+          label="Fecha de llamada"
+        />
+        <br />
+        <dx-text-box
+          v-model="callPhoneData.callReason"
+          label-mode="static"
+          styling-mode="underlined"
+          label="Motivo de llamada"
+        />
+        <br />
+        <dx-text-area
+          v-model="callPhoneData.observations"
+          label-mode="static"
+          styling-mode="underlined"
+          label="Observaciones"
+          :height="200"
+          :max-length="200"
         />
       </dx-popup>
 
@@ -199,17 +277,10 @@
         :drag-enabled="false"
         :show-close-button="false"
         :show-title="false"
-        :width="400"
-        :height="500"
         container=".dx-viewport"
         title="Information"
       >
-        <dx-position
-          v-model="popupEmailVisible"
-          at="right"
-          my="bottom"
-          of="#buttonEmail"
-        />
+        <dx-position v-model="popupEmailVisible" at="center" my="center" />
         <dx-toolbar-item
           widget="dxButton"
           toolbar="bottom"
@@ -222,20 +293,12 @@
           location="after"
           :options="closeEmailButtonOptions"
         />
-        <dx-tag-box
+        <dx-text-box
+          v-model="emailData.to"
           label-mode="static"
           styling-mode="underlined"
           label="Para"
-          v-model="emailData.to"
-          :accept-custom-value="true"
-        />
-        <br />
-        <dx-tag-box
-          label-mode="static"
-          styling-mode="underlined"
-          label="CC"
-          v-model="emailData.cc"
-          :accept-custom-value="true"
+          :read-only="true"
         />
         <br />
         <dx-text-box
@@ -245,14 +308,35 @@
           label="Asunto"
         />
         <br />
-        <dx-text-area
-          v-model="emailData.message"
-          label-mode="static"
-          styling-mode="underlined"
-          label="Mensaje"
-          :height="200"
-          :max-length="500"
-        />
+        <dx-html-editor
+          v-model="emailData.emailContent"
+          value-type="HTML"
+          :height="400"
+        >
+          <dx-toolbar>
+            <dx-item name="undo" />
+            <dx-item name="redo" />
+            <dx-item name="separator" />
+            <dx-item :accepted-values="sizeValues" name="size" />
+            <dx-item :accepted-values="fontValues" name="font" />
+            <dx-item name="separator" />
+            <dx-item name="bold" />
+            <dx-item name="italic" />
+            <dx-item name="strike" />
+            <dx-item name="underline" />
+            <dx-item name="separator" />
+            <dx-item name="link" />
+            <dx-item name="separator" />
+            <dx-item name="alignLeft" />
+            <dx-item name="alignCenter" />
+            <dx-item name="alignRight" />
+            <dx-item name="alignJustify" />
+            <dx-item name="separator" />
+            <dx-item name="orderedList" />
+            <dx-item name="bulletList" />
+            <dx-item name="separator" />
+          </dx-toolbar>
+        </dx-html-editor>
       </dx-popup>
     </div>
   </div>
@@ -267,6 +351,7 @@ import {
   DxTab,
   DxLabel,
 } from "devextreme-vue/form";
+import { DxHtmlEditor, DxToolbar, DxItem } from "devextreme-vue/html-editor";
 import { DxPopup, DxPosition, DxToolbarItem } from "devextreme-vue/popup";
 import DxTextBox from "devextreme-vue/text-box";
 import DxDateBox from "devextreme-vue/date-box";
@@ -274,18 +359,38 @@ import DxButton from "devextreme-vue/button";
 import DxTagBox from "devextreme-vue/tag-box";
 import DxTextArea from "devextreme-vue/text-area";
 import notify from "devextreme/ui/notify";
+import auth from "@/auth";
+import api from "@/scripts/api";
 
 export default {
   data() {
     return {
+      headerValues: [false, 1, 2, 3, 4, 5],
+      sizeValues: ["8pt", "10pt", "12pt", "14pt", "18pt", "24pt", "36pt"],
+      fontValues: [
+        "Arial",
+        "Courier New",
+        "Georgia",
+        "Impact",
+        "Lucida Console",
+        "Tahoma",
+        "Times New Roman",
+        "Verdana",
+      ],
       popupCallVisible: false,
+      popupCallPhoneVisible: false,
       popupEmailVisible: false,
       positionOf: "",
       emailData: {
-        to: [this.companyInfo.email],
-        cc: [],
-        subject: null,
-        message: null,
+        to: this.companyInfo.email,
+        subject: "",
+        emailContent: "",
+      },
+      callPhoneData: {
+        phoneNumber: this.companyInfo.telefono,
+        callDate: new Date(),
+        callReason: null,
+        observations: null,
       },
       callData: {
         phoneNumber: this.companyInfo.celular,
@@ -302,8 +407,59 @@ export default {
       sendCallButtonOptions: {
         text: "Registrar",
         onClick: () => {
-          notify("La llamada se ha registrado correctamente.", "success", 2000);
+          var data = {
+            idEmpresa: this.companyInfo.idEmpresa,
+            motivoComunicacion: !this.callData.callReason
+              ? "Sin Motivo"
+              : this.callData.callReason,
+            observacion: this.callData.observations,
+            idUsuario: auth.getUser().data.idUsuario,
+            referencia: this.callData.phoneNumber,
+            fechaComunicacion: this.callData.callDate,
+          };
+
+          this.sendRequest("/comunicacion/llamada", data);
+
+          //Volvemos a un valor por default
+          this.callData = {
+            phoneNumber: this.companyInfo.celular,
+            callDate: new Date(),
+            callReason: null,
+            observations: null,
+          };
           this.popupCallVisible = false;
+        },
+      },
+      closeCallPhoneButtonOptions: {
+        text: "Cancelar",
+        onClick: () => {
+          this.popupCallPhoneVisible = false;
+        },
+      },
+      sendCallPhoneButtonOptions: {
+        text: "Registrar",
+        onClick: () => {
+          var data = {
+            idEmpresa: this.companyInfo.idEmpresa,
+            motivoComunicacion: !this.callData.callReason
+              ? "Sin Motivo"
+              : this.callPhoneData.callReason,
+            observacion: this.callPhoneData.observations,
+            idUsuario: auth.getUser().data.idUsuario,
+            referencia: this.callPhoneData.phoneNumber,
+            fechaComunicacion: this.callData.callDate,
+          };
+
+          this.sendRequest("/comunicacion/llamada", data);
+
+          //Volvemos a un valor por default
+          this.callPhoneData = {
+            phoneNumber: this.companyInfo.telefono,
+            callDate: new Date(),
+            callReason: null,
+            observations: null,
+          };
+          this.popupCallPhoneVisible = false;
         },
       },
       closeEmailButtonOptions: {
@@ -315,15 +471,50 @@ export default {
       sendEmailButtonOptions: {
         text: "Enviar Correo",
         onClick: () => {
-          notify("El correo se ha enviado correctamente.", "success", 2000);
+          var data = {
+            idEmpresa: this.companyInfo.idEmpresa,
+            motivoComunicacion: this.emailData.subject,
+            referencia: this.emailData.to,
+            contenidoEmail: this.emailData.emailContent,
+            idUsuario: auth.getUser().data.idUsuario,
+          };
+
+          this.sendRequest("/comunicacion/correo", data);
+
+          //volvemos al valor por default
+          this.emailData = {
+            to: this.companyInfo.email,
+            subject: "",
+            emailContent: "",
+          };
           this.popupEmailVisible = false;
         },
       },
     };
   },
   methods: {
+    async sendRequest(url, data = {}) {
+      let token = auth.getAuthorizationToken();
+      let result;
+
+      await api
+        .post(url, data, { headers: { Authorization: `Bearer ${token}` } })
+        .then((response) => {
+          notify(response.data.data, "success", 2000);
+        })
+        .catch((error) => {
+          notify("Error inesperado al realizar la acción.", "error", 2000);
+        });
+
+      return result;
+    },
+
     showCallInfo() {
       this.popupCallVisible = true;
+    },
+
+    showCallPhoneInfo() {
+      this.popupCallPhoneVisible = true;
     },
 
     showEmailInfo() {
@@ -378,6 +569,9 @@ export default {
     DxLabel,
     DxTagBox,
     DxTextArea,
+    DxHtmlEditor,
+    DxToolbar,
+    DxItem,
   },
 };
 </script>
