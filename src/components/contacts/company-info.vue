@@ -100,7 +100,11 @@
               styling-mode="underlined"
               :value="companyInfo.telefono"
             />
-            <dx-button id="buttonCallPhone" icon="tel" @click="showCallPhoneInfo" />
+            <dx-button
+              id="buttonCallPhone"
+              icon="tel"
+              @click="showCallPhoneInfo"
+            />
           </div>
         </template>
         <template #emailTemplate>
@@ -415,7 +419,9 @@ export default {
             observacion: this.callData.observations,
             idUsuario: auth.getUser().data.idUsuario,
             referencia: this.callData.phoneNumber,
-            fechaComunicacion: this.callData.callDate,
+            fechaComunicacion: this.convertUTCDateToLocalDate(
+              this.callData.callDate
+            ),
           };
 
           this.sendRequest("/comunicacion/llamada", data);
@@ -447,7 +453,7 @@ export default {
             observacion: this.callPhoneData.observations,
             idUsuario: auth.getUser().data.idUsuario,
             referencia: this.callPhoneData.phoneNumber,
-            fechaComunicacion: this.callData.callDate,
+            fechaComunicacion: this.convertUTCDateToLocalDate(this.callData.callDate),
           };
 
           this.sendRequest("/comunicacion/llamada", data);
@@ -545,6 +551,19 @@ export default {
       return items.find(function (item) {
         return item.id === id;
       });
+    },
+
+    convertUTCDateToLocalDate(date) {
+      var newDate = new Date(
+        date.getTime() + date.getTimezoneOffset() * 60 * 1000
+      );
+
+      var offset = date.getTimezoneOffset() / 60;
+      var hours = date.getHours();
+
+      newDate.setHours(hours - offset);
+
+      return newDate;
     },
   },
 
