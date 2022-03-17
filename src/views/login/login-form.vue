@@ -18,7 +18,7 @@
           mode: 'password',
         }"
       >
-        <dx-required-rule message="Password is required" />
+        <dx-required-rule message="Password es requerido" />
         <dx-label :visible="false" />
       </dx-item>
       <dx-item

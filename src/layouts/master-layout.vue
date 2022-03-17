@@ -4,7 +4,6 @@
       class="layout-header"
       :menu-toggle-enabled="true"
       :toggle-menu-func="toggleMenu"
-      :title="title"
     />
     <dx-drawer
       class="layout-body"
@@ -40,7 +39,6 @@ import SideNavMenu from "../components/side-nav-menu";
 
 export default {
   props: {
-    title: String,
     isXSmall: Boolean,
     isLarge: Boolean
   },

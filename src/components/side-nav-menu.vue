@@ -43,7 +43,7 @@ export default {
         return;
       }
 
-      this.$router.push(e.itemData.path).catch(err => {});
+      this.$router.push(e.itemData.path).catch((err) => {});
 
       const pointerEvent = e.event;
       pointerEvent.stopPropagation();
@@ -69,8 +69,9 @@ export default {
     },
   },
   async mounted() {
+    this.treeView =
+      this.$refs["treeViewRef"] && this.$refs["treeViewRef"].instance;
     await this.loadMenu();
-    this.treeView = this.$refs[this.treeViewRef] && this.$refs[this.treeViewRef].instance;
     this.updateSelection();
     if (this.compactMode) {
       this.treeView.collapseAll();

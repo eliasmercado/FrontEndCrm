@@ -64,7 +64,6 @@ import UserPanel from "./user-panel";
 export default {
   props: {
     menuToggleEnabled: Boolean,
-    title: String,
     toggleMenuFunc: Function,
     logOutFunc: Function
   },
@@ -85,14 +84,15 @@ export default {
           icon: "runner",
           onClick: this.onLogoutClick
         }
-      ]
+      ],
+      title :"CRM"
     };
   },
   methods: {
     onLogoutClick() {
       auth.logOut();
       this.$router.push({
-        path: "/login-form",
+        path: "/login",
         query: { redirect: this.$route.path }
       });
     },
