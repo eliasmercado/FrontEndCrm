@@ -35,6 +35,24 @@
         :hiding-priority="2"
       >
       </dx-column>
+      <dx-column
+        type="buttons"
+        data-field="estado"
+        caption="Estado"
+        :allow-sorting="false"
+        :hiding-priority="3"
+      >
+        <dx-button
+          icon="isnotblank"
+          :visible="isStatusTrueIconVisible"
+          :on-click="updateStatusFalse"
+        />
+        <dx-button
+          icon="isblank"
+          :visible="isStatusFalseIconVisible"
+          :on-click="updateStatusTrue"
+        />
+      </dx-column>
 
       <dx-master-detail :enabled="true" template="subCategoriesTemplate" />
 
@@ -56,48 +74,23 @@
         :use-icons="true"
         mode="popup"
       >
-        <dx-texts add-row="Agregar Categoría" /><dx-popup />
-        <!--    <dx-form>
-          <dx-item
-            :col-count="3"
-            :col-span="2"
-            item-type="group"
-            caption="Datos Básicos"
-          >
+        <dx-texts add-row="Agregar Categoría" />
+        <dx-popup
+          :show-title="true"
+          :width="500"
+          :height="600"
+          title="Registrar Categoría"
+        />
+        <dx-form>
+          <dx-item :col-count="1" :col-span="2" item-type="group">
             <dx-item data-field="nombre" />
-            <dx-item data-field="ruc" />
-            <dx-item data-field="celular" />
-            <dx-item data-field="telefono" />
-            <dx-item data-field="email" />
-            <dx-item data-field="direccion" />
-            <dx-item data-field="idDepartamento" />
-            <dx-item data-field="idCiudad" />
+            <dx-item data-field="descripcion" />
           </dx-item>
-
-          <dx-item
-            :col-count="3"
-            :col-span="2"
-            item-type="group"
-            caption="Datos del Representante"
-          >
-            <dx-item data-field="nombreRepresentante" />
-            <dx-item data-field="celularRepresentante" />
-          </dx-item>
-
-          <dx-item
-            :col-count="3"
-            :col-span="2"
-            item-type="group"
-            caption="Datos del Contacto"
-          >
-            <dx-item data-field="idPropietario" />
-          </dx-item>
-        </dx-form> -->
+        </dx-form>
       </dx-editing>
 
       <dx-column type="buttons">
         <dx-button name="edit" />
-        <dx-button name="delete" />
       </dx-column>
     </dx-data-grid>
   </div>
@@ -120,17 +113,18 @@ import DxDataGrid, {
   DxItem as DxGridItem,
   DxMasterDetail,
 } from "devextreme-vue/data-grid";
+import { DxCheckBox } from "devextreme-vue/check-box";
 import notify from "devextreme/ui/notify";
-import CustomStore from "devextreme/data/custom_store";
 import { DxItem } from "devextreme-vue/form";
 import api from "@/scripts/api";
 import auth from "@/auth";
-import SubcategoryForm from "@/components/products/subcategory-form.vue"
+import SubcategoryForm from "@/components/products/subcategory-form.vue";
+import DataSource from "devextreme/data/data_source";
 
 export default {
   data() {
     return {
-      categoriesData: new CustomStore({
+      categoriesData: new DataSource({
         key: "idCategoria",
         load: () => this.sendRequest("/categoria"),
         insert: (values) => this.sendRequest("/categoria", "POST", values),
@@ -203,7 +197,68 @@ export default {
         ? ["idDepartamento", "=", options.data.idDepartamento]
         : null,
     }),
+
+    isStatusTrueIconVisible(e) {
+      return e.row.data.estado;
+    },
+
+    isStatusFalseIconVisible(e) {
+      return !e.row.data.estado;
+    },
+
+    async updateStatusTrue(e) {
+ let token = auth.getAuthorizationToken();
+      let data = e.row.data;
+
+      var newData = {
+        idCategoria: data.idCategoria,
+        nombre: data.nombre,
+        descripcion: data.descripcion,
+        idCategoriaPadre: data.idCategoriaPadre,
+        estado: true,
+      };
+
+      await api
+        .put(`/categoria/${data.idCategoria}`, newData, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          notify(response.data.data, "success", 2000);
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+
+        this.categoriesData.reload();
+    },
+
+    async updateStatusFalse(e) {
+      let token = auth.getAuthorizationToken();
+      let data = e.row.data;
+
+      var newData = {
+        idCategoria: data.idCategoria,
+        nombre: data.nombre,
+        descripcion: data.descripcion,
+        idCategoriaPadre: data.idCategoriaPadre,
+        estado: false,
+      };
+
+      await api
+        .put(`/categoria/${data.idCategoria}`, newData, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          notify(response.data.data, "success", 2000);
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+
+        this.categoriesData.reload();
+    },
   },
+
   created() {},
   components: {
     DxDataGrid,
@@ -222,7 +277,8 @@ export default {
     DxTexts,
     DxGridItem,
     DxMasterDetail,
-    SubcategoryForm
+    SubcategoryForm,
+    DxCheckBox,
   },
 };
 </script>
