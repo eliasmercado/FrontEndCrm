@@ -5,6 +5,7 @@ import Home from "./views/home";
 import Contacts from "./views/contacts/contacts-form"
 import Company from "./views/contacts/company-form"
 import Category from "./views/products/category-form"
+import Brand from "./views/products/brand-form"
 import defaultLayout from "./layouts/master-layout";
 import simpleLayout from "./layouts/login-layout";
 
@@ -46,6 +47,15 @@ const router = new Router({
       components: {
         layout: defaultLayout,
         content: Category
+      },
+    },
+    {
+      path: "/marcas",
+      name: "Brand",
+      meta: { requiresAuth: true },
+      components: {
+        layout: defaultLayout,
+        content: Brand
       },
     },
     {
