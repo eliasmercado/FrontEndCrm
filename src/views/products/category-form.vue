@@ -230,7 +230,7 @@ export default {
       }
     },
 
-    getJsonForUpdate() {
+    getJsonForUpdate(e) {
       //devextreme solo retorna el valor que se edito, pero para el back se necesita el json completo.
       //por eso reemplazamos el newData.
       e.newData = Object.assign({}, e.oldData, e.newData);
