@@ -13,6 +13,9 @@
       :column-hiding-enabled="true"
       :column-auto-width="true"
       @row-updating="getJsonForUpdate"
+      @init-new-row="initNewRow"
+      @edit-canceled="canceled"
+      @saved="saved"
     >
       <dx-search-panel :visible="true" :width="300"></dx-search-panel>
       <dx-paging :page-size="10" />
@@ -34,6 +37,18 @@
         :allow-sorting="false"
         :hiding-priority="2"
       >
+      </dx-column>
+      <dx-column
+        data-field="idCategoriaPadre"
+        :visible="false"
+        caption="Categoría Padre"
+      >
+        <dx-required-rule />
+        <dx-lookup
+          :data-source="categoriesData._items.filter((x) => x.estado)"
+          value-expr="idCategoria"
+          display-expr="nombre"
+        />
       </dx-column>
       <dx-column
         type="buttons"
@@ -71,7 +86,6 @@
         :allow-deleting="true"
         :allow-adding="true"
         refresh-mode="full"
-        :use-icons="true"
         mode="popup"
       >
         <dx-texts add-row="Agregar Categoría" />
@@ -79,15 +93,35 @@
           :show-title="true"
           :width="500"
           :height="600"
-          title="Registrar Categoría"
+          :title="title"
         />
         <dx-form>
           <dx-item :col-count="1" :col-span="2" item-type="group">
+            <dx-item
+              css-class="d-flex justify-content-center"
+              template="categoryOptionTemplate"
+            />
+            <dx-item
+              data-field="idCategoriaPadre"
+              v-if="categoryOptionSelected == 2"
+            />
             <dx-item data-field="nombre" />
             <dx-item data-field="descripcion" />
           </dx-item>
         </dx-form>
       </dx-editing>
+
+      <template #categoryOptionTemplate>
+        <dx-radio-group
+          :items="categoryOptions"
+          value-expr="id"
+          display-expr="text"
+          :value="categoryOptionSelected"
+          :disabled="isEditing"
+          layout="horizontal"
+          @valueChanged="changeCategoryOption"
+        />
+      </template>
 
       <dx-column type="buttons">
         <dx-button name="edit" />
@@ -113,7 +147,7 @@ import DxDataGrid, {
   DxItem as DxGridItem,
   DxMasterDetail,
 } from "devextreme-vue/data-grid";
-import { DxCheckBox } from "devextreme-vue/check-box";
+import DxRadioGroup from "devextreme-vue/radio-group";
 import notify from "devextreme/ui/notify";
 import { DxItem } from "devextreme-vue/form";
 import api from "@/scripts/api";
@@ -131,6 +165,14 @@ export default {
         update: (key, values) =>
           this.sendRequest(`/categoria/${key}`, "PUT", values),
       }),
+
+      categoryOptions: [
+        { id: 1, text: "Categoría" },
+        { id: 2, text: "SubCategoría" },
+      ],
+      categoryOptionSelected: 1,
+      isEditing: true,
+      title: "Editar Categoría",
     };
   },
   methods: {
@@ -185,10 +227,30 @@ export default {
       }
     },
 
-    getJsonForUpdate(e) {
+    getJsonForUpdate() {
       //devextreme solo retorna el valor que se edito, pero para el back se necesita el json completo.
       //por eso reemplazamos el newData.
       e.newData = Object.assign({}, e.oldData, e.newData);
+    },
+
+    //Cambiamos los valores de configuracion para cuando sea un insert
+    initNewRow(e) {
+      this.categoryOptionSelected = 1;
+      this.isEditing = false;
+      this.title = "Registrar Categoría";
+    },
+
+    //cuando sea guarda o cancela volvemos a los valores por default
+    saved(e) {
+      this.categoryOptionSelected = 1;
+      this.isEditing = true;
+      this.title = "Editar Categoría";
+    },
+
+    canceled(e) {
+      this.categoryOptionSelected = 1;
+      this.isEditing = true;
+      this.title = "Editar Categoría";
     },
 
     getFilteredCities: (options) => ({
@@ -197,6 +259,10 @@ export default {
         ? ["idDepartamento", "=", options.data.idDepartamento]
         : null,
     }),
+
+    changeCategoryOption(e) {
+      this.categoryOptionSelected = e.value;
+    },
 
     isStatusTrueIconVisible(e) {
       return e.row.data.estado;
@@ -207,7 +273,7 @@ export default {
     },
 
     async updateStatusTrue(e) {
- let token = auth.getAuthorizationToken();
+      let token = auth.getAuthorizationToken();
       let data = e.row.data;
 
       var newData = {
@@ -229,7 +295,7 @@ export default {
           notify(error.response.data.error.message, "error", 2000);
         });
 
-        this.categoriesData.reload();
+      this.categoriesData.reload();
     },
 
     async updateStatusFalse(e) {
@@ -255,7 +321,7 @@ export default {
           notify(error.response.data.error.message, "error", 2000);
         });
 
-        this.categoriesData.reload();
+      this.categoriesData.reload();
     },
   },
 
@@ -278,7 +344,7 @@ export default {
     DxGridItem,
     DxMasterDetail,
     SubcategoryForm,
-    DxCheckBox,
+    DxRadioGroup,
   },
 };
 </script>
