@@ -72,7 +72,11 @@
       <dx-master-detail :enabled="true" template="subCategoriesTemplate" />
 
       <template #subCategoriesTemplate="{ data: categoryData }">
-        <subcategory-form :parentCategory="categoryData.data" />
+        <subcategory-form
+          :parentCategory="categoryData.data"
+          :categoriesData="categoriesData._items"
+          @reloadParent="reloadCategories"
+        />
       </template>
 
       <dx-toolbar>
@@ -83,7 +87,6 @@
       <!-- Formulario de edicion -->
       <dx-editing
         :allow-updating="true"
-        :allow-deleting="true"
         :allow-adding="true"
         refresh-mode="full"
         mode="popup"
@@ -251,6 +254,11 @@ export default {
       this.categoryOptionSelected = 1;
       this.isEditing = true;
       this.title = "Editar Categoría";
+    },
+
+    //Desde el componente hijo lanzamos el evento para que recargue la grilla completa
+    reloadCategories() {
+      this.categoriesData.reload();
     },
 
     getFilteredCities: (options) => ({
