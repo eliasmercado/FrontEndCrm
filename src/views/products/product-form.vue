@@ -26,7 +26,7 @@
       <dx-column data-field="idMoneda" caption="Moneda" :visible="false">
         <dx-required-rule />
         <dx-lookup
-          :data-source="currenciesData"
+          :data-source="currenciesData._items"
           value-expr="idMoneda"
           display-expr="moneda"
         />
@@ -34,7 +34,7 @@
       <dx-column data-field="idMarca" caption="Marca" :visible="false">
         <dx-required-rule />
         <dx-lookup
-          :data-source="brandsData"
+          :data-source="brandsData._items"
           value-expr="idMarca"
           display-expr="nombre"
         />
@@ -47,7 +47,7 @@
       >
         <dx-required-rule />
         <dx-lookup
-          :data-source="categoriesData"
+          :data-source="categoriesData._items"
           value-expr="idCategoria"
           display-expr="nombre"
         />
@@ -174,27 +174,26 @@ import { exportDataGrid } from "devextreme/excel_exporter";
 import api from "@/scripts/api";
 import auth from "@/auth";
 import DataSource from "devextreme/data/data_source";
-import CustomStore from "devextreme/data/custom_store";
 
-const brandsData = new CustomStore({
+const brandsData = new DataSource({
   key: "Value",
   loadMode: "raw",
-  load: () => sendRequest("/marca"),
+  load: () => sendRequestWithStatus("/marca"),
 });
-const currenciesData = new CustomStore({
+const currenciesData = new DataSource({
   key: "Value",
   loadMode: "raw",
   load: () => sendRequest("/producto/moneda"),
 });
-const categoriesData = new CustomStore({
+const categoriesData = new DataSource({
   key: "Value",
   loadMode: "raw",
-  load: () => sendRequest("/categoria"),
+  load: () => sendRequestWithStatus("/categoria"),
 });
-const subCategoriesData = new CustomStore({
+const subCategoriesData = new DataSource({
   key: "Value",
   loadMode: "raw",
-  load: () => sendRequest("/categoria/subCategoria"),
+  load: () => sendRequestWithStatus("/categoria/subCategoria"),
 });
 
 function sendRequest(url) {
@@ -204,6 +203,19 @@ function sendRequest(url) {
     .get(url, { headers: { Authorization: `Bearer ${token}` } })
     .then((response) => {
       return response.data.data;
+    })
+    .catch((error) => {
+      notify(error.response.data.error.message, "error", 2000);
+    });
+}
+
+function sendRequestWithStatus(url) {
+  let token = auth.getAuthorizationToken();
+
+  return api
+    .get(url, { headers: { Authorization: `Bearer ${token}` } })
+    .then((response) => {
+      return response.data.data.filter(x => x.estado);
     })
     .catch((error) => {
       notify(error.response.data.error.message, "error", 2000);
@@ -250,6 +262,13 @@ export default {
         this.defaultSetCellValue(rowData, value);
       },
     };
+  },
+
+  mounted() {
+    this.brandsData.reload();
+    this.currenciesData.reload();
+    this.categoriesData.reload();
+    this.subCategoriesData.reload();
   },
 
   methods: {
@@ -326,7 +345,7 @@ export default {
     },
 
     getFilteredSubCategories: (options) => ({
-      store: subCategoriesData,
+      store: subCategoriesData._store,
       filter: options.data
         ? ["idCategoriaPadre", "=", options.data.idCategoriaPadre]
         : null,
