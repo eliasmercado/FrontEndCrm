@@ -93,9 +93,9 @@
             :col-count="3"
             :col-span="2"
             item-type="group"
-            caption="Detalle de la Oportunidad"
+            caption="Datos del Lead"
+            v-if="existClient == false"
           >
-            <dx-item data-field="contacto" v-if="existClient" />
             <dx-item
               data-field=""
               editor-type="dxButton"
@@ -103,8 +103,16 @@
                 text: 'Agregar Lead',
                 onClick: changeClientType,
               }"
-              v-if="existClient == false"
             />
+          </dx-item>
+
+          <dx-item
+            :col-count="3"
+            :col-span="2"
+            item-type="group"
+            caption="Detalle de la Oportunidad"
+          >
+            <dx-item data-field="contacto" v-if="existClient" />
           </dx-item>
 
           <dx-item
@@ -114,7 +122,7 @@
             caption="Datos de la Oportunidad"
           >
             <dx-item data-field="idPropietario" />
-            <dx-item data-field="observacion" />
+            <dx-item data-field="observacion"  />
             <dx-item data-field="sucursal" />
           </dx-item>
         </dx-form>
