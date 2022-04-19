@@ -40,6 +40,19 @@
       </dx-column>
       <dx-column data-field="contacto" caption="Contacto"> </dx-column>
       <dx-column
+        data-field="detalles"
+        :visible="false"
+        edit-cell-template="detailsTemplate"
+      >
+      </dx-column>
+
+      <template #detailsTemplate="{ data }">
+        <div>
+          {{ data.data.detalles }}
+        </div>
+      </template>
+
+      <dx-column
         data-field="fechaCierre"
         caption="Fecha de Cierre"
         data-type="date"
@@ -113,6 +126,7 @@
             caption="Detalle de la Oportunidad"
           >
             <dx-item data-field="contacto" v-if="existClient" />
+            <dx-item data-field="detalles" />
           </dx-item>
 
           <dx-item
@@ -122,7 +136,7 @@
             caption="Datos de la Oportunidad"
           >
             <dx-item data-field="idPropietario" />
-            <dx-item data-field="observacion"  />
+            <dx-item data-field="observacion" />
             <dx-item data-field="sucursal" />
           </dx-item>
         </dx-form>
@@ -215,6 +229,7 @@ export default {
             contacto: "Elias Mercado",
             fechaCierre: "10-08-2022",
             idPropietario: 1,
+            detalles: ["0972250212", "009911555"],
           },
         ];
 
