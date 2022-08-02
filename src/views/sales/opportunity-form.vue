@@ -22,8 +22,16 @@
     <br v-if="btnVolver" />
     <br v-if="btnVolver" />
 
-    <opportunity-grid v-show="viewGrid" />
-    <opportunity-form v-if="viewForm" />
+    <opportunity-grid
+      v-show="viewGrid"
+      ref="opportunityGrid"
+      @before-edit="preparingEditOpportunity"
+    />
+    <opportunity-form
+      v-if="viewForm"
+      :opportunity="opportunityData"
+      @insert="insertOpportunity"
+    />
   </div>
 </template>
 
@@ -31,6 +39,7 @@
 import DxButton from "devextreme-vue/button";
 import opportunityGrid from "@/components/sales/opportunity-grid.vue";
 import opportunityForm from "@/components/sales/opportunity-form.vue";
+import notify from "devextreme/ui/notify";
 
 export default {
   data() {
@@ -39,6 +48,7 @@ export default {
       btnAdd: true,
       viewGrid: true,
       viewForm: false,
+      opportunityData: {},
     };
   },
   methods: {
@@ -54,6 +64,18 @@ export default {
       this.viewGrid = true;
       this.btnVolver = false;
       this.btnAdd = true;
+      this.opportunityData = {};
+    },
+
+    preparingEditOpportunity(data) {
+      this.opportunityData = data;
+      this.viewOpportunityForm();
+    },
+
+    insertOpportunity() {
+      notify("Insertado", "success", 2000);
+      this.viewOpportunityGrid();
+      this.$refs.opportunityGrid.opportunitiesData.reload();
     },
   },
 

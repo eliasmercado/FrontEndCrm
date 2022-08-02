@@ -77,19 +77,6 @@
                   <dx-label text="Lead Asociado" />
                   <dx-required-rule message="Lead Asociado es requerido" />
                 </dx-item>
-
-                <dx-item
-                  v-for="(product, index) in productOptions"
-                  :key="'Product' + (index + 1)"
-                  :data-field="'Products[' + index + ']'"
-                  :editor-options="product"
-                >
-                  <dx-label :text="'Producto ' + (index + 1)" />
-                </dx-item>
-                <dx-button-item
-                  :button-options="addProductButtonOptions"
-                  horizontal-alignment="left"
-                />
               </dx-group-item>
             </dx-group-item>
             <dx-group-item>
@@ -156,20 +143,6 @@ export default {
       priorityData: [],
       clientType: ["Existente", "Lead"],
       source: ["CRM"],
-      opportunity: {
-        details: [],
-      },
-      productOptions: [],
-      addProductButtonOptions: {
-        icon: "add",
-        text: "Agregar Producto",
-        onClick: () => {
-          this.opportunity.details.push("");
-          this.productOptions = this.getProductOptions(
-            this.opportunity.details
-          );
-        },
-      },
     };
   },
   methods: {
@@ -224,44 +197,18 @@ export default {
       }
     },
 
-    getProductOptions(products) {
-      const options = [];
-      for (let i = 0; i < products.length; i += 1) {
-        options.push(this.generateNewProductOptions(i));
-      }
-      return options;
-    },
-
-    generateNewProductOptions(index) {
-      return {
-        buttons: [
-          {
-            name: "trash",
-            location: "after",
-            options: {
-              stylingMode: "text",
-              icon: "trash",
-              onClick: () => {
-                this.opportunity.details.splice(index, 1);
-                this.productOptions = this.getProductOptions(
-                  this.opportunity.details
-                );
-              },
-            },
-          },
-        ],
-      };
-    },
-
     handleSubmit(e) {
-      console.log(this.opportunity);
       e.preventDefault();
+      this.$emit("insert", this.opportunity);
     },
   },
   mounted() {
     this.getOwnerData();
     this.getStage();
     this.getPriorities();
+  },
+  props: {
+    opportunity: Object,
   },
 };
 </script>

@@ -11,8 +11,6 @@
       :repaint-changes-only="true"
       :column-hiding-enabled="true"
       :column-auto-width="true"
-      @init-new-row="initRow"
-      @row-updating="getJsonForUpdate"
       @exporting="onExporting"
     >
       <dx-export :enabled="true" />
@@ -29,27 +27,12 @@
       <dx-column
         data-field="tipoCliente"
         caption="Tipo Cliente"
-        :set-cell-value="setClientTypeValue"
         :allow-sorting="false"
         :hiding-priority="5"
       >
-        <dx-required-rule />
-        <dx-lookup :data-source="clientType" />
       </dx-column>
       <dx-column data-field="contacto" caption="Contacto"> </dx-column>
-      <dx-column
-        data-field="detalles"
-        :visible="false"
-        edit-cell-template="detailsTemplate"
-      >
-      </dx-column>
-
-      <template #detailsTemplate="{ data }">
-        <div>
-          {{ data.data.detalles }}
-        </div>
-      </template>
-
+      <dx-column data-field="detalles" :visible="false"> </dx-column>
       <dx-column
         data-field="fechaCierre"
         caption="Fecha de Cierre"
@@ -75,70 +58,6 @@
         <dx-grid-item name="addRowButton" show-text="always" />
         <dx-grid-item name="exportButton" location="after" />
       </dx-toolbar>
-      <!-- Formulario de edicion -->
-      <dx-editing
-        :allow-updating="true"
-        :allow-deleting="true"
-        :allow-adding="true"
-        refresh-mode="full"
-        :use-icons="true"
-        mode="popup"
-      >
-        <dx-texts add-row="Agregar Oportunidad" /><dx-popup />
-        <dx-form>
-          <dx-item
-            :col-count="3"
-            :col-span="2"
-            item-type="group"
-            caption="Datos Básicos"
-          >
-            <dx-item data-field="nombre" />
-            <dx-item data-field="fechaCierre" />
-            <dx-item data-field="etapa" />
-            <dx-item data-field="valor" />
-            <dx-item data-field="tipoCliente" />
-            <dx-item data-field="prioridad" />
-          </dx-item>
-
-          <dx-item
-            :col-count="3"
-            :col-span="2"
-            item-type="group"
-            caption="Datos del Lead"
-            v-if="existClient == false"
-          >
-            <dx-item
-              data-field=""
-              editor-type="dxButton"
-              :editor-options="{
-                text: 'Agregar Lead',
-                onClick: changeClientType,
-              }"
-            />
-          </dx-item>
-
-          <dx-item
-            :col-count="3"
-            :col-span="2"
-            item-type="group"
-            caption="Detalle de la Oportunidad"
-          >
-            <dx-item data-field="contacto" v-if="existClient" />
-            <dx-item data-field="detalles" />
-          </dx-item>
-
-          <dx-item
-            :col-count="3"
-            :col-span="2"
-            item-type="group"
-            caption="Datos de la Oportunidad"
-          >
-            <dx-item data-field="idPropietario" />
-            <dx-item data-field="observacion" />
-            <dx-item data-field="sucursal" />
-          </dx-item>
-        </dx-form>
-      </dx-editing>
 
       <dx-column type="buttons">
         <dx-button
@@ -146,18 +65,9 @@
           hint="Ver información"
           :on-click="showOpportunityInfo"
         />
-        <dx-button name="edit" />
+        <dx-button icon="edit" hint="Editar" :on-click="showOpportunityForm" />
       </dx-column>
     </dx-data-grid>
-
-    <back-button
-      icon="back"
-      v-if="viewOpportunityInfo"
-      text="Volver"
-      @click="viewOpportunityInfo = false"
-    />
-    <br />
-    <br />
   </div>
 </template>
 
@@ -182,6 +92,7 @@ import DxDataGrid, {
 } from "devextreme-vue/data-grid";
 import notify from "devextreme/ui/notify";
 import CustomStore from "devextreme/data/custom_store";
+import DataSource from "devextreme/data/data_source";
 import { DxItem } from "devextreme-vue/form";
 import { DxButton as BackButton } from "devextreme-vue/button";
 import { Workbook } from "exceljs";
@@ -193,13 +104,9 @@ import auth from "@/auth";
 export default {
   data() {
     return {
-      opportunitiesData: new CustomStore({
+      opportunitiesData: new DataSource({
         key: "idOportunidad",
         load: () => this.sendRequest("/contacto"),
-        insert: (values) => this.sendRequest("/contacto", "POST", values),
-        update: (key, values) =>
-          this.sendRequest(`/contacto/${key}`, "PUT", values),
-        remove: (key) => this.sendRequest(`/contacto/${key}`, "DELETE"),
       }),
       ownerData: new CustomStore({
         key: "Value",
@@ -209,7 +116,6 @@ export default {
       clientType: ["Existente", "Lead"],
       viewOpportunityInfo: false,
       opportunityInfo: {},
-      existClient: null,
     };
   },
   methods: {
@@ -243,72 +149,15 @@ export default {
             notify(error.response.data.error.message, "error", 2000);
           });
       }
-
-      if (method === "POST") {
-        return api
-          .post(url, data, { headers: { Authorization: `Bearer ${token}` } })
-          .then((response) => {
-            notify(response.data.data, "success", 2000);
-            return response.data.data;
-          })
-          .catch((error) => {
-            notify(error.response.data.error.message, "error", 2000);
-          });
-      }
-
-      if (method === "PUT") {
-        return api
-          .put(url, data, { headers: { Authorization: `Bearer ${token}` } })
-          .then((response) => {
-            notify(response.data.data, "success", 2000);
-            return response.data.data;
-          })
-          .catch((error) => {
-            notify(error.response.data.error.message, "error", 2000);
-          });
-      }
-
-      if (method === "DELETE") {
-        return api
-          .delete(url, { headers: { Authorization: `Bearer ${token}` } })
-          .then((response) => {
-            notify(response.data.data, "success", 2000);
-            return response.data.data;
-          })
-          .catch((error) => {
-            notify(error.response.data.error.message, "error", 2000);
-          });
-      }
-    },
-
-    changeClientType() {
-      this.existClient = true;
-    },
-
-    setClientTypeValue(rowData, value) {
-      //Si marca lead no existe el cliente
-      if (value == "Lead") {
-        this.existClient = false;
-      } else {
-        this.existClient = true;
-      }
-      rowData.tipoCliente = value;
-    },
-
-    getJsonForUpdate(e) {
-      //devextreme solo retorna el valor que se edito, pero para el back se necesita el json completo.
-      //por eso reemplazamos el newData.
-      e.newData = Object.assign({}, e.oldData, e.newData);
-    },
-
-    initRow(e) {
-      e.data.idPropietario = 1;
-      this.existClient = null;
     },
 
     showOpportunityInfo(e) {
       this.opportunityInfo = e.row.data;
       this.viewOpportunityInfo = true;
+    },
+
+    showOpportunityForm(e) {
+      this.$emit("before-edit", e.row.data);
     },
 
     onExporting(e) {
