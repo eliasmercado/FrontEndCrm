@@ -407,7 +407,8 @@ export default {
     },
 
     initRow(e) {
-      e.data.idPropietario = 1;
+      let user = auth.getUser();
+      e.data.idPropietario = user.data.idUsuario;
     },
 
     showContactInfo(e) {

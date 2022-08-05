@@ -15,7 +15,7 @@
               </dx-item>
               <dx-item
                 editor-type="dxSelectBox"
-                data-field="etapa"
+                data-field="idEtapa"
                 :editor-options="{
                   searchEnabled: true,
                   items: stageData,
@@ -44,7 +44,7 @@
               </dx-item>
               <dx-item
                 editor-type="dxSelectBox"
-                data-field="prioridad"
+                data-field="idPrioridad"
                 :editor-options="{
                   searchEnabled: true,
                   items: priorityData,
@@ -55,11 +55,29 @@
                 <dx-label text="Prioridad" />
                 <dx-required-rule message="Prioridad es requerido" />
               </dx-item>
-              <dx-item data-field="fuente">
+              <dx-item
+                editor-type="dxSelectBox"
+                data-field="idFuente"
+                :editor-options="{
+                  searchEnabled: true,
+                  items: source,
+                  displayExpr: 'fuente',
+                  valueExpr: 'idFuente',
+                }"
+              >
                 <dx-label text="Fuente" />
                 <dx-required-rule message="Fuente es requerido" />
               </dx-item>
-              <dx-item data-field="sucursal">
+              <dx-item
+                editor-type="dxSelectBox"
+                data-field="idSucursal"
+                :editor-options="{
+                  searchEnabled: true,
+                  items: branches,
+                  displayExpr: 'sucursal',
+                  valueExpr: 'idSucursal',
+                }"
+              >
                 <dx-label text="Sucursal" />
                 <dx-required-rule message="Sucursal es requerido" />
               </dx-item>
@@ -69,14 +87,21 @@
                 :col-count="3"
                 caption="Detalles de la Oportunidad"
               >
-                <dx-item data-field="idContacto" v-if="isLead == false">
+                <dx-item data-field="idContacto" :visible="isLead == false">
                   <dx-label text="Contacto Asociado" />
                   <dx-required-rule message="Contacto Asociado es requerido" />
                 </dx-item>
-                <dx-item data-field="idLead" v-if="isLead == true">
+                <dx-item data-field="idLead" :visible="isLead == true">
                   <dx-label text="Lead Asociado" />
                   <dx-required-rule message="Lead Asociado es requerido" />
                 </dx-item>
+
+                <dx-button-item
+                  css-class="btnAddLead"
+                  :visible="isLead == true"
+                >
+                  <dx-button-options text="Agregar Lead" />
+                </dx-button-item>
               </dx-group-item>
             </dx-group-item>
             <dx-group-item>
@@ -101,7 +126,7 @@
 
           <dx-button-item horizontal-alignment="left">
             <dx-button-options
-              type="success"
+              type="default"
               text="Guardar Oportunidad"
               :useSubmitBehavior="true"
             />
@@ -142,7 +167,8 @@ export default {
       stageData: [],
       priorityData: [],
       clientType: ["Existente", "Lead"],
-      source: ["CRM"],
+      source: [{ idFuente: 1, fuente: "CRM" }],
+      branches: [{ idSucursal: 1, sucursal: "matriz" }],
     };
   },
   methods: {
@@ -202,10 +228,14 @@ export default {
       this.$emit("insert", this.opportunity);
     },
   },
-  mounted() {
+  created() {
     this.getOwnerData();
     this.getStage();
     this.getPriorities();
+    this.changeClientType();
+
+    let user = auth.getUser();
+    this.opportunity.idPropietario = user.data.idUsuario;
   },
   props: {
     opportunity: Object,
@@ -213,4 +243,8 @@ export default {
 };
 </script>
 <style>
+.btnAddLead {
+  margin-top: 50px;
+  margin-right: 200px;
+}
 </style>

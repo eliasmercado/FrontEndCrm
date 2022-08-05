@@ -13,6 +13,7 @@
       :column-auto-width="true"
       @exporting="onExporting"
     >
+      <dx-header-filter :visible="true" />
       <dx-export :enabled="true" />
       <dx-search-panel :visible="true" :width="300"></dx-search-panel>
       <dx-paging :page-size="10" />
@@ -20,29 +21,47 @@
 
       <!-- Columnas de la grilla -->
       <dx-column data-field="idOportunidad" :visible="false" />
-      <dx-column data-field="nombre" caption="Nombre"></dx-column>
+      <dx-column
+        data-field="nombre"
+        :allow-sorting="false"
+        :allow-header-filtering="false"
+        caption="Nombre"
+      ></dx-column>
       <dx-column data-field="etapa" caption="Etapa"></dx-column>
-      <dx-column data-field="valor" caption="Valor"> </dx-column>
+      <dx-column
+        data-field="valor"
+        :allow-sorting="false"
+        :allow-header-filtering="false"
+        alignment="left"
+        caption="Valor"
+      >
+      </dx-column>
       <dx-column data-field="prioridad" caption="Prioridad"> </dx-column>
       <dx-column
         data-field="tipoCliente"
         caption="Tipo Cliente"
-        :allow-sorting="false"
         :hiding-priority="5"
       >
       </dx-column>
-      <dx-column data-field="contacto" caption="Contacto"> </dx-column>
-      <dx-column data-field="detalles" :visible="false"> </dx-column>
+      <dx-column
+        data-field="contacto"
+        :allow-sorting="false"
+        :allow-header-filtering="false"
+        caption="Contacto"
+      >
+      </dx-column>
       <dx-column
         data-field="fechaCierre"
         caption="Fecha de Cierre"
         data-type="date"
+        :allow-sorting="false"
       >
       </dx-column>
       <dx-column
         data-field="idPropietario"
         caption="Propietario"
         :allow-sorting="false"
+        :allow-header-filtering="false"
         :hiding-priority="5"
       >
         <dx-required-rule />
@@ -89,6 +108,7 @@ import DxDataGrid, {
   DxExport,
   DxButton,
   DxItem as DxGridItem,
+  DxHeaderFilter,
 } from "devextreme-vue/data-grid";
 import notify from "devextreme/ui/notify";
 import CustomStore from "devextreme/data/custom_store";
@@ -200,6 +220,7 @@ export default {
     DxExport,
     BackButton,
     DxGridItem,
+    DxHeaderFilter,
   },
 };
 </script>
