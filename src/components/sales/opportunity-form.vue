@@ -162,7 +162,8 @@
         <template #content>
           <dx-scroll-view width="100%" height="100%">
             <opportunity-detail
-              :products="opportunity.detalles"
+              :opportunityDetail="opportunity.detalles"
+              :products="products"
             ></opportunity-detail>
           </dx-scroll-view>
         </template>
@@ -217,6 +218,7 @@ export default {
       clientType: ["Existente", "Lead"],
       source: [],
       branches: [],
+      products: [],
       btnAddProductOptions: {
         text: "Editar Productos",
         type: "default",
@@ -277,7 +279,9 @@ export default {
       let token = auth.getAuthorizationToken();
 
       await api
-        .get("/oportunidad/fuente", { headers: { Authorization: `Bearer ${token}` } })
+        .get("/oportunidad/fuente", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
         .then((response) => {
           this.source = response.data.data;
         })
@@ -290,9 +294,24 @@ export default {
       let token = auth.getAuthorizationToken();
 
       await api
-        .get("/oportunidad/sucursal", { headers: { Authorization: `Bearer ${token}` } })
+        .get("/oportunidad/sucursal", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
         .then((response) => {
           this.branches = response.data.data;
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+    },
+
+    async getProducts() {
+      let token = auth.getAuthorizationToken();
+
+      await api
+        .get("/producto", { headers: { Authorization: `Bearer ${token}` } })
+        .then((response) => {
+          this.products = response.data.data;
         })
         .catch((error) => {
           notify(error.response.data.error.message, "error", 2000);
@@ -320,13 +339,18 @@ export default {
 
     getInfoProducts() {
       let productStr = "";
+      try {
+        this.opportunity.detalles.forEach((detail) => {
+          let productName = this.products.find(
+            (p) => p.idProducto == detail.idProducto
+          );
 
-      this.opportunity.detalles.forEach((detail) => {
-        productStr += `${detail.producto} - Cantidad: ${detail.cantidad}`;
-        productStr += "\n";
-      });
+          productStr += `${productName.descripcion} - Cantidad: ${detail.cantidad}`;
+          productStr += "\n";
+        });
 
-      return productStr;
+        return productStr;
+      } catch {}
     },
   },
   async created() {
@@ -338,6 +362,7 @@ export default {
     this.changeClientType();
     let user = auth.getUser();
     this.opportunity.idPropietario = user.data.idUsuario;
+    this.getProducts();
   },
   props: {
     opportunity: Object,

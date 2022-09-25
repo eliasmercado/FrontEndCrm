@@ -1,8 +1,8 @@
 <template>
   <div>
     <dx-data-grid
-      :data-source="products"
-      key-expr="idProducto"
+      :data-source="opportunityDetail"
+      key-expr="idDetalleOportunidad"
       :show-column-lines="false"
       :show-row-lines="true"
       :show-borders="true"
@@ -17,8 +17,15 @@
         :allow-adding="true"
         mode="row"
       />
+      <dx-column data-field="idProducto" caption="Producto">
+        <dx-required-rule />
+        <dx-lookup
+          :data-source="products"
+          value-expr="idProducto"
+          display-expr="descripcion"
+        />
+      </dx-column>
 
-      <dx-column data-field="producto"><dx-required-rule /></dx-column>
       <dx-column
         :width="100"
         :allow-sorting="false"
@@ -36,6 +43,7 @@ import {
   DxColumn,
   DxEditing,
   DxRequiredRule,
+  DxLookup,
 } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 
@@ -46,13 +54,15 @@ export default {
     DxEditing,
     DxRequiredRule,
     DxButton,
+    DxLookup,
   },
   data() {
     return {};
   },
   methods: {},
-
+  mounted() {},
   props: {
+    opportunityDetail: Array,
     products: Array,
   },
 };
