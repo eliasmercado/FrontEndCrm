@@ -64,7 +64,7 @@ export default {
       this.viewGrid = true;
       this.btnVolver = false;
       this.btnAdd = true;
-      this.opportunityData = {};
+      this.opportunity = {};
     },
     
     preparingEditOpportunity(data) {
