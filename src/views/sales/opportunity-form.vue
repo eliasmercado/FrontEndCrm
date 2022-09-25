@@ -29,7 +29,7 @@
     />
     <opportunity-form
       v-if="viewForm"
-      :opportunity="opportunityData"
+      :opportunity="opportunity"
       @insert="insertOpportunity"
     />
   </div>
@@ -46,9 +46,9 @@ export default {
     return {
       btnVolver: false,
       btnAdd: true,
-      viewGrid: false,
-      viewForm: true,
-      opportunityData: { detalles: [] },
+      viewGrid: true,
+      viewForm: false,
+      opportunity: {}
     };
   },
   methods: {
@@ -66,9 +66,9 @@ export default {
       this.btnAdd = true;
       this.opportunityData = {};
     },
-
+    
     preparingEditOpportunity(data) {
-      this.opportunityData = data;
+      this.opportunity = data;
       this.viewOpportunityForm();
     },
 

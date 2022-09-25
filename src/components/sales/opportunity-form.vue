@@ -215,8 +215,8 @@ export default {
       stageData: [],
       priorityData: [],
       clientType: ["Existente", "Lead"],
-      source: [{ idFuente: 1, fuente: "CRM" }],
-      branches: [{ idSucursal: 1, sucursal: "matriz" }],
+      source: [],
+      branches: [],
       btnAddProductOptions: {
         text: "Editar Productos",
         type: "default",
@@ -273,6 +273,32 @@ export default {
         });
     },
 
+    async getSources() {
+      let token = auth.getAuthorizationToken();
+
+      await api
+        .get("/oportunidad/fuente", { headers: { Authorization: `Bearer ${token}` } })
+        .then((response) => {
+          this.source = response.data.data;
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+    },
+
+    async getBranches() {
+      let token = auth.getAuthorizationToken();
+
+      await api
+        .get("/oportunidad/sucursal", { headers: { Authorization: `Bearer ${token}` } })
+        .then((response) => {
+          this.branches = response.data.data;
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+    },
+
     changeClientType() {
       if (this.opportunity.tipoCliente == "Existente") {
         this.isLead = false;
@@ -303,12 +329,13 @@ export default {
       return productStr;
     },
   },
-  created() {
+  async created() {
     this.getOwnerData();
     this.getStage();
     this.getPriorities();
+    this.getBranches();
+    this.getSources();
     this.changeClientType();
-
     let user = auth.getUser();
     this.opportunity.idPropietario = user.data.idUsuario;
   },

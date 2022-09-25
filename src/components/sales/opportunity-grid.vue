@@ -145,8 +145,26 @@ export default {
       this.viewOpportunityInfo = true;
     },
 
-    showOpportunityForm(e) {
-      this.$emit("before-edit", e.row.data);
+    async getOpportunity(opportunityId) {
+      let token = auth.getAuthorizationToken();
+      let opportunity = null;
+      await api
+        .get("/oportunidad/" + opportunityId, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          opportunity = response.data.data;
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+
+      return opportunity;
+    },
+
+    async showOpportunityForm(e) {
+      let opportunity = await this.getOpportunity(e.row.data.idOportunidad);
+      this.$emit("before-edit", opportunity);
     },
 
     onExporting(e) {
