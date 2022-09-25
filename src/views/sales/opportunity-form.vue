@@ -46,9 +46,9 @@ export default {
     return {
       btnVolver: false,
       btnAdd: true,
-      viewGrid: true,
-      viewForm: false,
-      opportunityData: {},
+      viewGrid: false,
+      viewForm: true,
+      opportunityData: { detalles: [] },
     };
   },
   methods: {

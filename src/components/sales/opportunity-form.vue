@@ -95,7 +95,6 @@
                   <dx-label text="Lead Asociado" />
                   <dx-required-rule message="Lead Asociado es requerido" />
                 </dx-item>
-
                 <dx-button-item
                   css-class="btnAddLead"
                   :visible="isLead == true"
@@ -103,6 +102,14 @@
                   <dx-button-options text="Agregar Lead" />
                 </dx-button-item>
               </dx-group-item>
+              <!-- Para mostrar el listado de productos que se cargar en el popup -->
+              <dx-item template="details"></dx-item>
+
+              <dx-button-item
+                horizontal-alignment="left"
+                :button-options="btnAddProductOptions"
+              >
+              </dx-button-item>
             </dx-group-item>
             <dx-group-item>
               <dx-group-item :col-count="3" caption="Datos de la Oportunidad">
@@ -131,8 +138,41 @@
               :useSubmitBehavior="true"
             />
           </dx-button-item>
+
+          <template #details>
+            <div
+              class="productDetail"
+              v-if="opportunity.detalles.length == '0'"
+            >
+              No hay productos seleccionados.
+            </div>
+            <div v-else>
+              <pre class="productDetail">{{ getInfoProducts() }}</pre>
+            </div>
+          </template>
         </dx-form>
       </form>
+
+      <dx-popup
+        :width="550"
+        :visible="showOpportunityDetail"
+        :show-title="false"
+        :hide-on-outside-click="false"
+      >
+        <template #content>
+          <dx-scroll-view width="100%" height="100%">
+            <opportunity-detail
+              :products="opportunity.detalles"
+            ></opportunity-detail>
+          </dx-scroll-view>
+        </template>
+        <dx-toolbar-item
+          widget="dxButton"
+          toolbar="bottom"
+          location="after"
+          :options="closePopupOptions"
+        />
+      </dx-popup>
     </div>
   </div>
 </template>
@@ -149,9 +189,13 @@ import {
 import notify from "devextreme/ui/notify";
 import api from "@/scripts/api";
 import auth from "@/auth";
+import opportunityDetail from "@/components/sales/opportunity-detail.vue";
+import { DxPopup, DxToolbarItem } from "devextreme-vue/popup";
+import { DxScrollView } from "devextreme-vue/scroll-view";
 
 export default {
   components: {
+    "opportunity-detail": opportunityDetail,
     DxForm,
     DxItem,
     DxGroupItem,
@@ -159,16 +203,32 @@ export default {
     DxRequiredRule,
     DxButtonItem,
     DxButtonOptions,
+    DxPopup,
+    DxScrollView,
+    DxToolbarItem,
   },
   data() {
     return {
-      ownerData: [],
       isLead: null,
+      showOpportunityDetail: false,
+      ownerData: [],
       stageData: [],
       priorityData: [],
       clientType: ["Existente", "Lead"],
       source: [{ idFuente: 1, fuente: "CRM" }],
       branches: [{ idSucursal: 1, sucursal: "matriz" }],
+      btnAddProductOptions: {
+        text: "Editar Productos",
+        type: "default",
+        stylingMode: "outlined",
+        onClick: this.addProducts,
+      },
+      closePopupOptions: {
+        text: "Cerrar",
+        onClick: () => {
+          this.showOpportunityDetail = false;
+        },
+      },
     };
   },
   methods: {
@@ -227,6 +287,21 @@ export default {
       e.preventDefault();
       this.$emit("insert", this.opportunity);
     },
+
+    addProducts() {
+      this.showOpportunityDetail = true;
+    },
+
+    getInfoProducts() {
+      let productStr = "";
+
+      this.opportunity.detalles.forEach((detail) => {
+        productStr += `${detail.producto} - Cantidad: ${detail.cantidad}`;
+        productStr += "\n";
+      });
+
+      return productStr;
+    },
   },
   created() {
     this.getOwnerData();
@@ -246,5 +321,9 @@ export default {
 .btnAddLead {
   margin-top: 50px;
   margin-right: 200px;
+}
+
+.productDetail {
+  font-size: 13px;
 }
 </style>
