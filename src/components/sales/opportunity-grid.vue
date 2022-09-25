@@ -58,18 +58,11 @@
       >
       </dx-column>
       <dx-column
-        data-field="idPropietario"
-        caption="Propietario"
+        data-field="propietario"
         :allow-sorting="false"
         :allow-header-filtering="false"
-        :hiding-priority="5"
+        caption="Propietario"
       >
-        <dx-required-rule />
-        <dx-lookup
-          :data-source="ownerData"
-          value-expr="idPropietario"
-          display-expr="propietario"
-        />
       </dx-column>
 
       <dx-toolbar>
@@ -111,7 +104,6 @@ import DxDataGrid, {
   DxHeaderFilter,
 } from "devextreme-vue/data-grid";
 import notify from "devextreme/ui/notify";
-import CustomStore from "devextreme/data/custom_store";
 import DataSource from "devextreme/data/data_source";
 import { DxItem } from "devextreme-vue/form";
 import { DxButton as BackButton } from "devextreme-vue/button";
@@ -126,14 +118,8 @@ export default {
     return {
       opportunitiesData: new DataSource({
         key: "idOportunidad",
-        load: () => this.sendRequest("/contacto"),
+        load: () => this.sendRequest("/oportunidad"),
       }),
-      ownerData: new CustomStore({
-        key: "Value",
-        loadMode: "raw",
-        load: () => this.sendRequest("/propietario"),
-      }),
-      clientType: ["Existente", "Lead"],
       viewOpportunityInfo: false,
       opportunityInfo: {},
     };
@@ -141,24 +127,7 @@ export default {
   methods: {
     sendRequest(url, method = "GET", data = {}) {
       let token = auth.getAuthorizationToken();
-      if (url != "/propietario") {
-        let tempData = [
-          {
-            idOportunidad: 1,
-            nombre: "Oportunidad 1",
-            etapa: "Lead",
-            valor: 10,
-            prioridad: "Alta",
-            tipoCliente: "Existente",
-            contacto: "Elias Mercado",
-            fechaCierre: "10-08-2022",
-            idPropietario: 1,
-            detalles: ["0972250212", "009911555"],
-          },
-        ];
 
-        return tempData;
-      }
       if (method === "GET") {
         return api
           .get(url, { headers: { Authorization: `Bearer ${token}` } })
