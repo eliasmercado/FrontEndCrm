@@ -48,7 +48,7 @@ export default {
       btnAdd: true,
       viewGrid: true,
       viewForm: false,
-      opportunity: {}
+      opportunity: { detalles: [] },
     };
   },
   methods: {
@@ -66,13 +66,13 @@ export default {
       this.btnAdd = true;
       this.opportunity = {};
     },
-    
+
     preparingEditOpportunity(data) {
       this.opportunity = data;
       this.viewOpportunityForm();
     },
 
-    insertOpportunity() {
+    insertOpportunity(data) {
       notify("Insertado", "success", 2000);
       this.viewOpportunityGrid();
       this.$refs.opportunityGrid.opportunitiesData.reload();
