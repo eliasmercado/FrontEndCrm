@@ -87,11 +87,31 @@
                 :col-count="3"
                 caption="Detalles de la Oportunidad"
               >
-                <dx-item data-field="idContacto" :visible="isLead == false">
+                <dx-item
+                  editor-type="dxSelectBox"
+                  data-field="idContactoAsociado"
+                  :visible="isLead == false"
+                  :editor-options="{
+                    searchEnabled: true,
+                    items: contacts,
+                    displayExpr: 'nombre',
+                    valueExpr: 'idContacto',
+                  }"
+                >
                   <dx-label text="Contacto Asociado" />
                   <dx-required-rule message="Contacto Asociado es requerido" />
                 </dx-item>
-                <dx-item data-field="idLead" :visible="isLead == true">
+                <dx-item
+                  editor-type="dxSelectBox"
+                  data-field="idContactoAsociado"
+                  :visible="isLead == true"
+                  :editor-options="{
+                    searchEnabled: true,
+                    items: leads,
+                    displayExpr: 'nombre',
+                    valueExpr: 'idContacto',
+                  }"
+                >
                   <dx-label text="Lead Asociado" />
                   <dx-required-rule message="Lead Asociado es requerido" />
                 </dx-item>
@@ -219,6 +239,8 @@ export default {
       source: [],
       branches: [],
       products: [],
+      contacts: [],
+      leads: [],
       btnAddProductOptions: {
         text: "Editar Productos",
         type: "default",
@@ -305,6 +327,36 @@ export default {
         });
     },
 
+    async getContacts() {
+      let token = auth.getAuthorizationToken();
+
+      await api
+        .get("/oportunidad/contacto", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          this.contacts = response.data.data;
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+    },
+
+    async getLeads() {
+      let token = auth.getAuthorizationToken();
+
+      await api
+        .get("/oportunidad/contacto?esLead=true", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          this.leads = response.data.data;
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+    },
+
     async getProducts() {
       let token = auth.getAuthorizationToken();
 
@@ -359,6 +411,8 @@ export default {
     this.getPriorities();
     this.getBranches();
     this.getSources();
+    this.getContacts();
+    this.getLeads();
     this.changeClientType();
     let user = auth.getUser();
     this.opportunity.idPropietario = user.data.idUsuario;
