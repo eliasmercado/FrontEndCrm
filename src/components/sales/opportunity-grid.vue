@@ -26,21 +26,27 @@
         :allow-sorting="false"
         :allow-header-filtering="false"
         caption="Nombre"
+        :hiding-priority="8"
       ></dx-column>
-      <dx-column data-field="etapa" caption="Etapa"></dx-column>
+      <dx-column
+        data-field="etapa"
+        caption="Etapa"
+        :hiding-priority="7"
+      ></dx-column>
       <dx-column
         data-field="valor"
         :allow-sorting="false"
         :allow-header-filtering="false"
         alignment="left"
         caption="Valor"
+        :hiding-priority="6"
       >
       </dx-column>
-      <dx-column data-field="prioridad" caption="Prioridad"> </dx-column>
+      <dx-column data-field="prioridad" caption="Prioridad" :hiding-priority="2"> </dx-column>
       <dx-column
         data-field="tipoCliente"
         caption="Tipo Cliente"
-        :hiding-priority="5"
+        :hiding-priority="4"
       >
       </dx-column>
       <dx-column
@@ -48,6 +54,7 @@
         :allow-sorting="false"
         :allow-header-filtering="false"
         caption="Contacto"
+        :hiding-priority="5"
       >
       </dx-column>
       <dx-column
@@ -55,6 +62,7 @@
         caption="Fecha de Cierre"
         data-type="date"
         :allow-sorting="false"
+        :hiding-priority="3"
       >
       </dx-column>
       <dx-column
@@ -62,6 +70,7 @@
         :allow-sorting="false"
         :allow-header-filtering="false"
         caption="Propietario"
+        :hiding-priority="1"
       >
       </dx-column>
 
