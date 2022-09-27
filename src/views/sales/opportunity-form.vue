@@ -40,6 +40,8 @@ import DxButton from "devextreme-vue/button";
 import opportunityGrid from "@/components/sales/opportunity-grid.vue";
 import opportunityForm from "@/components/sales/opportunity-form.vue";
 import notify from "devextreme/ui/notify";
+import api from "@/scripts/api";
+import auth from "@/auth";
 
 export default {
   data() {
@@ -48,7 +50,7 @@ export default {
       btnAdd: true,
       viewGrid: true,
       viewForm: false,
-      opportunity: { detalles: [] },
+      opportunity: { detalles: [], valor: 0 },
     };
   },
   methods: {
@@ -64,7 +66,7 @@ export default {
       this.viewGrid = true;
       this.btnVolver = false;
       this.btnAdd = true;
-      this.opportunity = {};
+      this.opportunity = { detalles: [], valor: 0 };
     },
 
     preparingEditOpportunity(data) {
@@ -72,10 +74,32 @@ export default {
       this.viewOpportunityForm();
     },
 
-    insertOpportunity(data) {
-      notify("Insertado", "success", 2000);
+    async insertOpportunity(data) {
+      //si el id no existe vamos a llamar a insertar
+      if (typeof data.idOportunidad === "undefined") {
+        this.insertNewOpportunity(data);
+      } else {
+        console.log("actualizamos");
+      }
+    },
+
+    async insertNewOpportunity(data) {
+      console.log(data)
+      let token = auth.getAuthorizationToken();
+
+      await api
+        .post("/oportunidad", data, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          notify(response.data.data, "success", 2000);
+          this.$refs.opportunityGrid.opportunitiesData.reload();
+        })
+        .catch((error) => {
+          console.error(error);
+          notify(error.response.data.error.message, "error", 2000);
+        });
       this.viewOpportunityGrid();
-      this.$refs.opportunityGrid.opportunitiesData.reload();
     },
   },
 

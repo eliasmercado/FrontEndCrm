@@ -26,7 +26,7 @@
                 <dx-label text="Etapa" />
                 <dx-required-rule message="Etapa es requerido" />
               </dx-item>
-              <dx-item data-field="valor">
+              <dx-item data-field="valor" editor-type="dxNumberBox">
                 <dx-label text="Valor" />
                 <dx-required-rule message="Valor es requerido" />
               </dx-item>
@@ -164,7 +164,7 @@
               class="productDetail"
               v-if="opportunity.detalles.length == '0'"
             >
-              No hay productos seleccionados.
+              No hay productos seleccionados.{{ getInfoProducts() }}
             </div>
             <div v-else>
               <pre class="productDetail">{{ getInfoProducts() }}</pre>
@@ -391,16 +391,21 @@ export default {
 
     getInfoProducts() {
       let productStr = "";
+      let value = 0;
       try {
+        if (this.opportunity.detalles.length == "0") {
+          value = 0;
+        }
+
         this.opportunity.detalles.forEach((detail) => {
           let productName = this.products.find(
             (p) => p.idProducto == detail.idProducto
           );
-
+          value = parseInt(productName.precio);
           productStr += `${productName.descripcion} - Cantidad: ${detail.cantidad}`;
           productStr += "\n";
         });
-
+        this.opportunity.valor = value;
         return productStr;
       } catch {}
     },
