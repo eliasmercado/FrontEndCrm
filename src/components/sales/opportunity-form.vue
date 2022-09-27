@@ -250,6 +250,7 @@ export default {
       closePopupOptions: {
         text: "Cerrar",
         onClick: () => {
+          this.obtenerValorOportunidad();
           this.showOpportunityDetail = false;
         },
       },
@@ -391,6 +392,19 @@ export default {
 
     getInfoProducts() {
       let productStr = "";
+      try {
+        this.opportunity.detalles.forEach((detail) => {
+          let productName = this.products.find(
+            (p) => p.idProducto == detail.idProducto
+          );
+          productStr += `${productName.descripcion} - Cantidad: ${detail.cantidad}`;
+          productStr += "\n";
+        });
+        return productStr;
+      } catch {}
+    },
+
+    obtenerValorOportunidad() {
       let value = 0;
       try {
         if (this.opportunity.detalles.length == "0") {
@@ -401,14 +415,12 @@ export default {
           let productName = this.products.find(
             (p) => p.idProducto == detail.idProducto
           );
-          value = parseInt(productName.precio);
-          productStr += `${productName.descripcion} - Cantidad: ${detail.cantidad}`;
-          productStr += "\n";
+          value += parseInt(productName.precio * detail.cantidad);
         });
         this.opportunity.valor = value;
         return productStr;
       } catch {}
-    },
+    }
   },
   async created() {
     this.getOwnerData();
@@ -418,6 +430,7 @@ export default {
     this.getSources();
     this.getContacts();
     this.getLeads();
+    this.obtenerValorOportunidad();
     this.changeClientType();
     let user = auth.getUser();
     this.opportunity.idPropietario = user.data.idUsuario;

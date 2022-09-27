@@ -84,7 +84,15 @@ export default {
     },
 
     async insertNewOpportunity(data) {
-      console.log(data)
+      let detailList = [];
+      let detail = {};
+      data.detalles.forEach((element) => {
+        detail.idProducto = element.idProducto;
+        detail.cantidad = element.cantidad;
+        detailList.push(detail);
+      });
+
+      data.detalles = detailList;
       let token = auth.getAuthorizationToken();
 
       await api
