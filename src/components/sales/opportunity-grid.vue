@@ -149,6 +149,10 @@ export default {
       }
     },
 
+    reloadOpportunityGrid() {
+      this.opportunitiesData.reload();
+    },
+
     showOpportunityInfo(e) {
       this.opportunityInfo = e.row.data;
       this.viewOpportunityInfo = true;

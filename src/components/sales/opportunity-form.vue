@@ -164,10 +164,10 @@
               class="productDetail"
               v-if="opportunity.detalles.length == '0'"
             >
-              No hay productos seleccionados.{{ getInfoProducts() }}
+              {{ infoProducts }}
             </div>
             <div v-else>
-              <pre class="productDetail">{{ getInfoProducts() }}</pre>
+              <pre class="productDetail">{{ infoProducts }}</pre>
             </div>
           </template>
         </dx-form>
@@ -241,6 +241,8 @@ export default {
       products: [],
       contacts: [],
       leads: [],
+      details: [],
+      infoProducts: "",
       btnAddProductOptions: {
         text: "Editar Productos",
         type: "default",
@@ -250,7 +252,7 @@ export default {
       closePopupOptions: {
         text: "Cerrar",
         onClick: () => {
-          this.obtenerValorOportunidad();
+          this.getOpportunityValue();
           this.showOpportunityDetail = false;
         },
       },
@@ -383,7 +385,7 @@ export default {
 
     handleSubmit(e) {
       e.preventDefault();
-      this.$emit("insert", this.opportunity);
+      this.$emit("insert", this.opportunity, this.details);
     },
 
     addProducts() {
@@ -393,48 +395,53 @@ export default {
     getInfoProducts() {
       let productStr = "";
       try {
-        this.opportunity.detalles.forEach((detail) => {
-          let productName = this.products.find(
-            (p) => p.idProducto == detail.idProducto
-          );
-          productStr += `${productName.descripcion} - Cantidad: ${detail.cantidad}`;
-          productStr += "\n";
-        });
+        if (this.opportunity.detalles.length == "0") {
+          return "No hay productos seleccionados.";
+        } else {
+          this.opportunity.detalles.forEach((detail) => {
+            let productName = this.products.find(
+              (p) => p.idProducto == detail.idProducto
+            );
+            productStr += `${productName.descripcion} - Cantidad: ${detail.cantidad}`;
+            productStr += "\n";
+          });
+        }
         return productStr;
       } catch {}
     },
 
-    obtenerValorOportunidad() {
+    getOpportunityValue() {
       let value = 0;
       try {
         if (this.opportunity.detalles.length == "0") {
           value = 0;
+        } else {
+          this.opportunity.detalles.forEach((detail) => {
+            let productName = this.products.find(
+              (p) => p.idProducto == detail.idProducto
+            );
+            value += parseInt(productName.precio * detail.cantidad);
+          });
         }
-
-        this.opportunity.detalles.forEach((detail) => {
-          let productName = this.products.find(
-            (p) => p.idProducto == detail.idProducto
-          );
-          value += parseInt(productName.precio * detail.cantidad);
-        });
         this.opportunity.valor = value;
-        return productStr;
+        this.infoProducts = this.getInfoProducts();
+        this.details = this.opportunity.detalles;
       } catch {}
-    }
+    },
   },
   async created() {
     this.getOwnerData();
+    let user = auth.getUser();
+    this.opportunity.idPropietario = user.data.idUsuario;
     this.getStage();
     this.getPriorities();
     this.getBranches();
     this.getSources();
     this.getContacts();
     this.getLeads();
-    this.obtenerValorOportunidad();
+    await this.getProducts();
+    this.getOpportunityValue();
     this.changeClientType();
-    let user = auth.getUser();
-    this.opportunity.idPropietario = user.data.idUsuario;
-    this.getProducts();
   },
   props: {
     opportunity: Object,

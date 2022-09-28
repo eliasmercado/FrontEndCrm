@@ -63,10 +63,10 @@ export default {
 
     viewOpportunityGrid() {
       this.viewForm = false;
-      this.viewGrid = true;
       this.btnVolver = false;
       this.btnAdd = true;
       this.opportunity = { detalles: [], valor: 0 };
+      this.viewGrid = true;
     },
 
     preparingEditOpportunity(data) {
@@ -74,22 +74,24 @@ export default {
       this.viewOpportunityForm();
     },
 
-    async insertOpportunity(data) {
+    async insertOpportunity(data, details) {
       //si el id no existe vamos a llamar a insertar
       if (typeof data.idOportunidad === "undefined") {
-        this.insertNewOpportunity(data);
+        this.insertNewOpportunity(data, details);
       } else {
-        console.log("actualizamos");
+        this.editOpportunity(data, details);
       }
     },
 
-    async insertNewOpportunity(data) {
+    async insertNewOpportunity(data, details) {
       let detailList = [];
-      let detail = {};
-      data.detalles.forEach((element) => {
-        detail.idProducto = element.idProducto;
-        detail.cantidad = element.cantidad;
-        detailList.push(detail);
+      
+      detailList = details.map(function (elem) {
+        let returnObjeto = {
+          idProducto: elem.idProducto,
+          cantidad: elem.cantidad,
+        };
+        return returnObjeto;
       });
 
       data.detalles = detailList;
@@ -101,13 +103,43 @@ export default {
         })
         .then((response) => {
           notify(response.data.data, "success", 2000);
-          this.$refs.opportunityGrid.opportunitiesData.reload();
         })
         .catch((error) => {
-          console.error(error);
           notify(error.response.data.error.message, "error", 2000);
         });
       this.viewOpportunityGrid();
+      this.$refs.opportunityGrid.reloadOpportunityGrid();
+    },
+
+    async editOpportunity(data, details) {
+      let detailList = [];
+
+      detailList = details.map(function (elem) {
+        let returnObjeto = {
+          idDetalleOportunidad:
+            typeof elem.idDetalleOportunidad == "string"
+              ? 0
+              : elem.idDetalleOportunidad,
+          idProducto: elem.idProducto,
+          cantidad: elem.cantidad,
+        };
+        return returnObjeto;
+      });
+
+      data.detalles = detailList;
+      let token = auth.getAuthorizationToken();
+      await api
+        .put("/oportunidad/" + data.idOportunidad, data, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          notify(response.data.data, "success", 2000);
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+      this.viewOpportunityGrid();
+      this.$refs.opportunityGrid.reloadOpportunityGrid();
     },
   },
 
