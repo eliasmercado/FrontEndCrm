@@ -115,12 +115,12 @@
                   <dx-label text="Lead Asociado" />
                   <dx-required-rule message="Lead Asociado es requerido" />
                 </dx-item>
-                <dx-button-item
+<!--                 <dx-button-item
                   css-class="btnAddLead"
                   :visible="isLead == true"
                 >
                   <dx-button-options text="Agregar Lead" />
-                </dx-button-item>
+                </dx-button-item> -->
               </dx-group-item>
               <!-- Para mostrar el listado de productos que se cargar en el popup -->
               <dx-item template="details"></dx-item>
