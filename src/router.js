@@ -84,7 +84,7 @@ const router = new Router({
     ,
     {
       path: "/lead/contactos",
-      name: "contacts",
+      name: "contactsLead",
       meta: { requiresAuth: true },
       components: {
         layout: defaultLayout,
@@ -93,7 +93,7 @@ const router = new Router({
     },
     {
       path: "/lead/empresas",
-      name: "company",
+      name: "companyLead",
       meta: { requiresAuth: true },
       components: {
         layout: defaultLayout,
