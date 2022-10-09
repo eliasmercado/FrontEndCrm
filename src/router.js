@@ -10,6 +10,8 @@ import Product from "./views/products/product-form"
 import Opportunity from "./views/sales/opportunity-form"
 import defaultLayout from "./layouts/master-layout";
 import simpleLayout from "./layouts/login-layout";
+import ContactsLead from "./views/leads/contacts-form"
+import CompanyLead from "./views/leads/company-form"
 
 Vue.use(Router);
 
@@ -76,6 +78,25 @@ const router = new Router({
       components: {
         layout: defaultLayout,
         content: Opportunity
+      },
+    },
+    ,
+    {
+      path: "/lead/contactos",
+      name: "contacts",
+      meta: { requiresAuth: true },
+      components: {
+        layout: defaultLayout,
+        content: ContactsLead
+      },
+    },
+    {
+      path: "/lead/empresas",
+      name: "company",
+      meta: { requiresAuth: true },
+      components: {
+        layout: defaultLayout,
+        content: CompanyLead
       },
     },
     {
