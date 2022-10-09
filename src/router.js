@@ -12,6 +12,7 @@ import defaultLayout from "./layouts/master-layout";
 import simpleLayout from "./layouts/login-layout";
 import ContactsLead from "./views/leads/contacts-form"
 import CompanyLead from "./views/leads/company-form"
+import BranchForm from "./views/sales/branch-form"
 
 Vue.use(Router);
 
@@ -97,6 +98,15 @@ const router = new Router({
       components: {
         layout: defaultLayout,
         content: CompanyLead
+      },
+    },
+    {
+      path: "/sucursales",
+      name: "Branches",
+      meta: { requiresAuth: true },
+      components: {
+        layout: defaultLayout,
+        content: BranchForm
       },
     },
     {
