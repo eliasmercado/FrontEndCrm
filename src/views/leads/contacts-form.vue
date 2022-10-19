@@ -1,6 +1,6 @@
 <template>
   <div class="content-block">
-    <h2>Contactos</h2>
+    <h2>Posibles Contactos</h2>
 
     <dx-data-grid
       v-show="!viewContactInfo"
@@ -308,7 +308,7 @@ export default {
     return {
       contactsData: new CustomStore({
         key: "idContacto",
-        load: () => this.sendRequest("/contacto"),
+        load: () => this.sendRequest("/contacto?esLead=true"),
         insert: (values) => this.sendRequest("/contacto", "POST", values),
         update: (key, values) =>
           this.sendRequest(`/contacto/${key}`, "PUT", values),
@@ -347,6 +347,7 @@ export default {
   methods: {
     sendRequest(url, method = "GET", data = {}) {
       let token = auth.getAuthorizationToken();
+      data.esLead = true;
 
       if (method === "GET") {
         return api
@@ -418,7 +419,7 @@ export default {
 
     onExporting(e) {
       const workbook = new Workbook();
-      const worksheet = workbook.addWorksheet("Contactos");
+      const worksheet = workbook.addWorksheet("Posibles Contactos");
 
       exportDataGrid({
         component: e.component,
@@ -428,7 +429,7 @@ export default {
         workbook.xlsx.writeBuffer().then((buffer) => {
           saveAs(
             new Blob([buffer], { type: "application/octet-stream" }),
-            "Contactos.xlsx"
+            "LeadContactos.xlsx"
           );
         });
       });

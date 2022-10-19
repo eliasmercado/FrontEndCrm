@@ -1,9 +1,9 @@
 <template>
   <div class="content-block">
-    <h2>Contactos</h2>
+    <h2>Posibles Empresas</h2>
 
     <dx-data-grid
-      v-show="!viewContactInfo"
+      v-show="!viewCompanyInfo"
       class="dx-card wide-card"
       :data-source="contactsData"
       :show-column-lines="false"
@@ -23,17 +23,21 @@
       <dx-pager :show-page-size-selector="true" :show-info="true" />
 
       <!-- Columnas de la grilla -->
+      <dx-column data-field="idEmpresa" :visible="false" />
       <dx-column
-        :calculate-cell-value="calculateCellValue"
-        caption="Nombre Completo"
+        caption="Nombre"
+        data-field="nombre"
         :allow-sorting="false"
         :hiding-priority="6"
-      />
-      <dx-column data-field="idContacto" :visible="false" />
-      <dx-column data-field="nombres" :visible="false">
+      >
         <dx-required-rule />
       </dx-column>
-      <dx-column data-field="apellidos" :visible="false">
+      <dx-column
+        data-field="ruc"
+        caption="Documento"
+        :allow-sorting="false"
+        :hiding-priority="1"
+      >
         <dx-required-rule />
       </dx-column>
       <dx-column
@@ -45,57 +49,23 @@
       >
         <dx-required-rule />
       </dx-column>
-
+      <dx-column
+        data-field="telefono"
+        caption="Teléfono"
+        :allow-sorting="false"
+        :allowFiltering="false"
+        :hiding-priority="3"
+      >
+        <dx-required-rule />
+      </dx-column>
       <dx-column
         data-field="email"
         caption="Email"
         :allowFiltering="false"
         :allow-sorting="false"
-        :hiding-priority="1"
-      >
-        <dx-email-rule />
-        <dx-required-rule />
-      </dx-column>
-      <dx-column
-        data-field="fechaNacimiento"
-        data-type="date"
-        :visible="false"
-        caption="Fecha de Nacimiento"
-      >
-        <dx-required-rule />
-      </dx-column>
-      <dx-column
-        data-field="idEstadoCivil"
-        :visible="false"
-        caption="Estado Civil"
-      >
-        <dx-required-rule />
-        <dx-lookup
-          :data-source="civilStatusData"
-          value-expr="idEstadoCivil"
-          display-expr="estadoCivil"
-        />
-      </dx-column>
-      <dx-column
-        data-field="idTipoDocumento"
-        caption="Tipo de Documento"
-        :allow-sorting="false"
         :hiding-priority="2"
       >
-        <dx-required-rule />
-        <dx-lookup
-          :data-source="documentsData"
-          value-expr="idTipoDocumento"
-          display-expr="tipoDocumento"
-        />
-      </dx-column>
-
-      <dx-column
-        data-field="documento"
-        caption="Documento"
-        :allow-sorting="false"
-        :hiding-priority="3"
-      >
+        <dx-email-rule />
         <dx-required-rule />
       </dx-column>
       <dx-column data-field="direccion" :visible="false">
@@ -123,26 +93,21 @@
         />
       </dx-column>
       <dx-column
-        data-field="idActividadEconomica"
+        data-field="nombreRepresentante"
         :visible="false"
-        caption="Actividad Económica"
+        caption="Nombre"
       >
         <dx-required-rule />
-        <dx-lookup
-          :data-source="economicActivityData"
-          value-expr="idActividadEconomica"
-          display-expr="actividadEconomica"
-        />
       </dx-column>
       <dx-column
-        data-field="nombreEmpresa"
+        data-field="celularRepresentante"
+        caption="Celular"
         :visible="false"
-        caption="Nombre de la Empresa"
-      />
-      <dx-column data-field="direccionLaboral" :visible="false" />
-      <dx-column data-field="telefonoLaboral" :visible="false" />
-      <dx-column data-field="correoLaboral" :visible="false">
-        <dx-email-rule />
+      >
+        <dx-required-rule />
+      </dx-column>
+      <dx-column data-field="telefonoLaboral" :visible="false">
+        <dx-required-rule />
       </dx-column>
       <dx-column
         data-field="idPropietario"
@@ -172,7 +137,7 @@
         :use-icons="true"
         mode="popup"
       >
-        <dx-texts add-row="Agregar Contacto" /><dx-popup />
+        <dx-texts add-row="Agregar Empresa" /><dx-popup />
         <dx-form>
           <dx-item
             :col-count="3"
@@ -180,14 +145,11 @@
             item-type="group"
             caption="Datos Básicos"
           >
-            <dx-item data-field="nombres" />
-            <dx-item data-field="apellidos" />
+            <dx-item data-field="nombre" />
+            <dx-item data-field="ruc" />
             <dx-item data-field="celular" />
+            <dx-item data-field="telefono" />
             <dx-item data-field="email" />
-            <dx-item data-field="fechaNacimiento" />
-            <dx-item data-field="idEstadoCivil" />
-            <dx-item data-field="idTipoDocumento" />
-            <dx-item data-field="documento" />
             <dx-item data-field="direccion" />
             <dx-item data-field="idDepartamento" />
             <dx-item data-field="idCiudad" />
@@ -197,13 +159,10 @@
             :col-count="3"
             :col-span="2"
             item-type="group"
-            caption="Datos Laborales"
+            caption="Datos del Representante"
           >
-            <dx-item data-field="idActividadEconomica" />
-            <dx-item data-field="nombreEmpresa" />
-            <dx-item data-field="direccionLaboral" />
-            <dx-item data-field="telefonoLaboral" />
-            <dx-item data-field="correoLaboral" />
+            <dx-item data-field="nombreRepresentante" />
+            <dx-item data-field="celularRepresentante" />
           </dx-item>
 
           <dx-item
@@ -221,7 +180,7 @@
         <dx-button
           icon="info"
           hint="Ver información"
-          :on-click="showContactInfo"
+          :on-click="showCompanyInfo"
         />
         <dx-button name="edit" />
         <dx-button name="delete" />
@@ -230,20 +189,17 @@
 
     <back-button
       icon="back"
-      v-if="viewContactInfo"
+      v-if="viewCompanyInfo"
       text="Volver"
-      @click="viewContactInfo = false"
+      @click="viewCompanyInfo = false"
     />
     <br />
     <br />
-    <contact-info
-      :contact-info="contactInfo"
+    <company-info
+      :company-info="companyInfo"
       :cities="cityData.__rawData"
       :states="stateData.__rawData"
-      :documentsType="documentsData.__rawData"
-      :civilStatus="civilStatusData.__rawData"
-      :economicActivity="economicActivityData.__rawData"
-      v-if="viewContactInfo"
+      v-if="viewCompanyInfo"
     />
   </div>
 </template>
@@ -277,7 +233,7 @@ import { saveAs } from "file-saver";
 import { exportDataGrid } from "devextreme/excel_exporter";
 import api from "@/scripts/api";
 import auth from "@/auth";
-import ContactInfo from "@/components/contacts/contact-info";
+import CompanyInfo from "@/components/contacts/company-info";
 
 const stateData = new CustomStore({
   key: "Value",
@@ -307,27 +263,12 @@ export default {
   data() {
     return {
       contactsData: new CustomStore({
-        key: "idContacto",
-        load: () => this.sendRequest("/contacto"),
-        insert: (values) => this.sendRequest("/contacto", "POST", values),
+        key: "idEmpresa",
+        load: () => this.sendRequest("/empresa?esLead=true"),
+        insert: (values) => this.sendRequest("/empresa", "POST", values),
         update: (key, values) =>
-          this.sendRequest(`/contacto/${key}`, "PUT", values),
-        remove: (key) => this.sendRequest(`/contacto/${key}`, "DELETE"),
-      }),
-      documentsData: new CustomStore({
-        key: "Value",
-        loadMode: "raw",
-        load: () => this.sendRequest("/contacto/tipoDocumento"),
-      }),
-      civilStatusData: new CustomStore({
-        key: "Value",
-        loadMode: "raw",
-        load: () => this.sendRequest("/contacto/estadoCivil"),
-      }),
-      economicActivityData: new CustomStore({
-        key: "Value",
-        loadMode: "raw",
-        load: () => this.sendRequest("/contacto/actividadEconomica"),
+          this.sendRequest(`/empresa/${key}`, "PUT", values),
+        remove: (key) => this.sendRequest(`/empresa/${key}`, "DELETE"),
       }),
       ownerData: new CustomStore({
         key: "Value",
@@ -340,13 +281,14 @@ export default {
         rowData.idCiudad = null;
         this.defaultSetCellValue(rowData, value);
       },
-      viewContactInfo: false,
-      contactInfo: {},
+      viewCompanyInfo: false,
+      companyInfo: {},
     };
   },
   methods: {
     sendRequest(url, method = "GET", data = {}) {
       let token = auth.getAuthorizationToken();
+      data.esLead = true;
 
       if (method === "GET") {
         return api
@@ -396,10 +338,6 @@ export default {
       }
     },
 
-    calculateCellValue(data) {
-      return [data.nombres, data.apellidos].join(" ");
-    },
-
     getJsonForUpdate(e) {
       //devextreme solo retorna el valor que se edito, pero para el back se necesita el json completo.
       //por eso reemplazamos el newData.
@@ -411,14 +349,14 @@ export default {
       e.data.idPropietario = user.data.idUsuario;
     },
 
-    showContactInfo(e) {
-      this.contactInfo = e.row.data;
-      this.viewContactInfo = true;
+    showCompanyInfo(e) {
+      this.companyInfo = e.row.data;
+      this.viewCompanyInfo = true;
     },
 
     onExporting(e) {
       const workbook = new Workbook();
-      const worksheet = workbook.addWorksheet("Contactos");
+      const worksheet = workbook.addWorksheet("Posibles Empresas");
 
       exportDataGrid({
         component: e.component,
@@ -428,7 +366,7 @@ export default {
         workbook.xlsx.writeBuffer().then((buffer) => {
           saveAs(
             new Blob([buffer], { type: "application/octet-stream" }),
-            "Contactos.xlsx"
+            "LeadEmpresas.xlsx"
           );
         });
       });
@@ -458,7 +396,7 @@ export default {
     DxRequiredRule,
     DxEmailRule,
     DxPatternRule,
-    ContactInfo,
+    CompanyInfo,
     DxButton,
     DxSearchPanel,
     DxTexts,
