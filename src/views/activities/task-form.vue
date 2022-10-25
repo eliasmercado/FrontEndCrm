@@ -69,6 +69,16 @@ export default {
       this.tasks = data;
       this.viewTaskForm();
     },
+
+    
+    async insertTask(data, details) {
+      //si el id no existe vamos a llamar a insertar
+     /* if (typeof data.idOportunidad === "undefined") {
+        this.insertNewOpportunity(data, details);
+      } else {
+        this.editOpportunity(data, details);
+      }*/
+    },
   },
 
   components: {

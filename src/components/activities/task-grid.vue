@@ -120,7 +120,7 @@ export default {
     return {
       tasksData: new DataSource({
         key: "idTarea",
-        load: () => this.sendRequest("/marca"),
+        load: () => this.sendRequest("/tarea"),
       }),
       viewTaskInfo: false,
       taskInfo: {},
@@ -135,14 +135,7 @@ export default {
         return api
           .get(url, { headers: { Authorization: `Bearer ${token}` } })
           .then((response) => {
-            return {
-              idTarea: 1,
-              titulo: "Nueva Tarea",
-              tipo: "Llamada",
-              estado: "Abierto",
-              fechaCierre: "22/10/2022",
-              responsable: "Elias",
-            };
+            return response.data.data;
           })
           .catch((error) => {
             notify(error.response.data.error.message, "error", 2000);
@@ -163,7 +156,7 @@ export default {
       let token = auth.getAuthorizationToken();
       let task = null;
       await api
-        .get("/oportunidad/" + taskId, {
+        .get("/tarea/" + taskId, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
