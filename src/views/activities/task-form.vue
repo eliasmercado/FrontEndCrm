@@ -4,6 +4,7 @@
     <div class="row">
       <div class="offset-md-6 col-md-6 text-right">
         <dx-button
+          v-if="btnAdd"
           @click="viewTaskForm"
           icon="plus"
           text="Nueva Tarea"
@@ -26,7 +27,7 @@
       ref="taskGrid"
       @before-edit="preparingEditTask"
     />
-    <task-form v-if="viewForm" :task="tasks" @insert="insertTask" />
+    <task-form v-if="viewForm" :task="task" @insert="insertTask" />
   </div>
 </template>
 
@@ -45,7 +46,7 @@ export default {
       btnAdd: true,
       viewGrid: true,
       viewForm: false,
-      tasks: {},
+      task: {},
     };
   },
 
@@ -61,23 +62,35 @@ export default {
       this.viewForm = false;
       this.btnVolver = false;
       this.btnAdd = true;
-      this.tasks = {};
+      this.task = {};
       this.viewGrid = true;
     },
 
     preparingEditTask(data) {
-      this.tasks = data;
+      this.task = data;
       this.viewTaskForm();
     },
 
-    
-    async insertTask(data, details) {
+    async insertTask(data) {
+      console.log(data);
       //si el id no existe vamos a llamar a insertar
-     /* if (typeof data.idOportunidad === "undefined") {
-        this.insertNewOpportunity(data, details);
+      if (typeof data.idTarea === "undefined") {
+        this.insertNewTask(data);
       } else {
-        this.editOpportunity(data, details);
-      }*/
+        this.editTask(data);
+      }
+    },
+
+    async insertNewTask(data) {
+      console.log("vamos a insertar");
+      this.viewTaskGrid();
+      this.$refs.taskGrid.reloadTaskGrid();
+    },
+
+    async editTask(data) {
+      console.log("vamos a editar");
+      this.viewTaskGrid();
+      this.$refs.taskGrid.reloadTaskGrid();
     },
   },
 
