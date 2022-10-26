@@ -43,7 +43,7 @@ export default {
         {
           text: "Cerrada",
           id: 0,
-          color: "#8bc34a",
+          color: "#4bb543",
         },
       ],
       currentDate: new Date(),

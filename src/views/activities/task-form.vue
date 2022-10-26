@@ -2,9 +2,24 @@
   <div class="content-block">
     <h2>Tareas</h2>
     <div class="row">
-      <div class="offset-md-6 col-md-6 text-right">
-<!--         <label></label><div class="circle">Abierto - Cerrado</div></label>
- -->        <dx-button
+      <div class="col-md-6 text-left" v-if="viewScheduler">
+        <div class="row rowCalendarInfo">
+          <div id="squareOpen" />
+          <div>Abierta</div>
+        </div>
+        <div class="row rowCalendarInfo">
+          <div id="squareClose" />
+          <div>Cerrada</div>
+        </div>
+      </div>
+      <div
+        :class="
+          viewScheduler
+            ? 'col-md-6 text-right'
+            : 'offset-md-6 col-md-6 text-right'
+        "
+      >
+        <dx-button
           v-if="btnScheduler"
           @click="viewTaskScheduler"
           icon="event"
@@ -142,10 +157,21 @@ export default {
 </script>
 
 <style>
-.circle {
-    background: lightblue;
-    border-radius: 50%;
-    width: 10px;
-    height: 10px;
+#squareOpen {
+  background: #ff9747;
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+#squareClose {
+  background: #4bb543;
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+.rowCalendarInfo {
+  margin-left: 0px;
 }
 </style>
