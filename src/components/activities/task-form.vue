@@ -71,7 +71,7 @@
           <dx-button-item horizontal-alignment="left">
             <dx-button-options
               type="default"
-              text="Guardar Oportunidad"
+              text="Guardar Tarea"
               :useSubmitBehavior="true"
             />
           </dx-button-item>

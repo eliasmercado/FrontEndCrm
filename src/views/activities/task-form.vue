@@ -3,6 +3,21 @@
     <h2>Tareas</h2>
     <div class="row">
       <div class="offset-md-6 col-md-6 text-right">
+<!--         <label></label><div class="circle">Abierto - Cerrado</div></label>
+ -->        <dx-button
+          v-if="btnScheduler"
+          @click="viewTaskScheduler"
+          icon="event"
+          text="Calendario"
+          styling-mode="text"
+        />
+        <dx-button
+          v-if="btnGridBack"
+          @click="viewTaskGrid"
+          icon="back"
+          text="Cambiar Vista"
+          styling-mode="text"
+        />
         <dx-button
           v-if="btnAdd"
           @click="viewTaskForm"
@@ -28,6 +43,8 @@
       @before-edit="preparingEditTask"
     />
     <task-form v-if="viewForm" :task="task" @insert="insertTask" />
+
+    <scheduler-task v-if="viewScheduler" />
   </div>
 </template>
 
@@ -35,6 +52,7 @@
 import DxButton from "devextreme-vue/button";
 import taskGrid from "@/components/activities/task-grid.vue";
 import taskForm from "@/components/activities/task-form.vue";
+import schedulerTask from "@/components/activities/scheduler-task.vue";
 import notify from "devextreme/ui/notify";
 import api from "@/scripts/api";
 import auth from "@/auth";
@@ -46,6 +64,9 @@ export default {
       btnAdd: true,
       viewGrid: true,
       viewForm: false,
+      viewScheduler: false,
+      btnScheduler: true,
+      btnGridBack: false,
       task: {},
     };
   },
@@ -56,14 +77,31 @@ export default {
       this.viewGrid = false;
       this.btnVolver = true;
       this.btnAdd = false;
+      this.btnGridBack = false;
+      this.btnScheduler = false;
+      this.viewScheduler = false;
     },
 
     viewTaskGrid() {
       this.viewForm = false;
       this.btnVolver = false;
       this.btnAdd = true;
+      this.btnGridBack = false;
       this.task = {};
       this.viewGrid = true;
+      this.btnScheduler = true;
+      this.viewScheduler = false;
+    },
+
+    viewTaskScheduler() {
+      this.viewForm = false;
+      this.btnVolver = false;
+      this.btnAdd = true;
+      this.btnGridBack = true;
+      this.task = {};
+      this.viewGrid = false;
+      this.btnScheduler = false;
+      this.viewScheduler = true;
     },
 
     preparingEditTask(data) {
@@ -97,10 +135,17 @@ export default {
   components: {
     "task-grid": taskGrid,
     "task-form": taskForm,
+    "scheduler-task": schedulerTask,
     DxButton,
   },
 };
 </script>
 
 <style>
+.circle {
+    background: lightblue;
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+}
 </style>
