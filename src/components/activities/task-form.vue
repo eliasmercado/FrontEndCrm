@@ -38,11 +38,19 @@
               <dx-label text="Estado" />
               <dx-required-rule message="Estado es requerido" />
             </dx-item>
-            <dx-item data-field="fechaInicio" editor-type="dxDateBox">
+            <dx-item
+              data-field="fechaInicio"
+              editor-type="dxDateBox"
+              :editor-options="{ min: new Date() }"
+            >
               <dx-label text="Fecha de Inicio" />
               <dx-required-rule message="Fecha de Inicio es requerido" />
             </dx-item>
-            <dx-item data-field="fechaCierre" editor-type="dxDateBox">
+            <dx-item
+              data-field="fechaCierre"
+              editor-type="dxDateBox"
+              :editor-options="{ min: new Date() }"
+            >
               <dx-label text="Fecha de Cierre" />
               <dx-required-rule message="Fecha de Cierre es requerido" />
             </dx-item>
@@ -150,7 +158,15 @@ export default {
 
     handleSubmit(e) {
       e.preventDefault();
-      this.$emit("insert", this.task);
+      if (this.task.fechaInicio > this.task.fechaCierre) {
+        notify(
+          "La fecha de cierre no puede ser menor a la fecha de inicio.",
+          "error",
+          2000
+        );
+      } else {
+        this.$emit("insert", this.task);
+      }
     },
   },
 

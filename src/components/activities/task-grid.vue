@@ -21,7 +21,7 @@
         caption="Titulo"
         data-field="titulo"
         :allow-sorting="false"
-        :hiding-priority="5"
+        :hiding-priority="6"
         :allow-header-filtering="false"
       >
         <dx-required-rule />
@@ -41,18 +41,26 @@
       >
       </dx-column>
       <dx-column
-        data-field="fechaCierre"
-        caption="Fecha de Cierre"
+        data-field="fechaInicio"
+        caption="Fecha de Inicio"
         data-type="date"
         :allow-sorting="false"
         :hiding-priority="3"
       >
       </dx-column>
       <dx-column
+        data-field="fechaCierre"
+        caption="Fecha de Cierre"
+        data-type="date"
+        :allow-sorting="false"
+        :hiding-priority="4"
+      >
+      </dx-column>
+      <dx-column
         data-field="responsable"
         caption="Responsable"
         :allow-sorting="false"
-        :hiding-priority="4"
+        :hiding-priority="5"
       >
       </dx-column>
 
