@@ -2,7 +2,39 @@
   <div class="content-block">
     <h2>Oportunidades</h2>
     <div class="row">
-      <div class="offset-md-6 col-md-6 text-right">
+      <div class="col-md-6 text-left" v-if="viewBoard">
+        <div class="row">
+          <div id="squareLow" />
+          <div>Baja</div>
+        </div>
+        <div class="row">
+          <div id="squareMid" />
+          <div>Media</div>
+        </div>
+        <div class="row">
+          <div id="squareHigh" />
+          <div>Alta</div>
+        </div>
+      </div>
+      <div
+        :class="
+          viewBoard ? 'col-md-6 text-right' : 'offset-md-6 col-md-6 text-right'
+        "
+      >
+        <dx-button
+          v-if="btnBoard"
+          @click="viewopportunityBoard"
+          icon="fields"
+          text="Tablero"
+          styling-mode="text"
+        />
+        <dx-button
+          v-if="btnGridBack"
+          @click="viewOpportunityGridAndReload"
+          icon="back"
+          text="Cambiar Vista"
+          styling-mode="text"
+        />
         <dx-button
           v-if="btnAdd"
           icon="plus"
@@ -32,6 +64,7 @@
       :opportunity="opportunity"
       @insert="insertOpportunity"
     />
+    <opportunity-kanban v-if="viewBoard"></opportunity-kanban>
   </div>
 </template>
 
@@ -39,6 +72,7 @@
 import DxButton from "devextreme-vue/button";
 import opportunityGrid from "@/components/sales/opportunity-grid.vue";
 import opportunityForm from "@/components/sales/opportunity-form.vue";
+import opportunityKanban from "@/components/sales/opportunity-kanban.vue";
 import notify from "devextreme/ui/notify";
 import api from "@/scripts/api";
 import auth from "@/auth";
@@ -51,6 +85,9 @@ export default {
       viewGrid: true,
       viewForm: false,
       opportunity: { detalles: [], valor: 0 },
+      viewBoard: false,
+      btnBoard: true,
+      btnGridBack: false,
     };
   },
   methods: {
@@ -59,6 +96,9 @@ export default {
       this.viewGrid = false;
       this.btnVolver = true;
       this.btnAdd = false;
+      this.btnGridBack = false;
+      this.btnBoard = false;
+      this.viewBoard = false;
     },
 
     viewOpportunityGrid() {
@@ -66,7 +106,33 @@ export default {
       this.btnVolver = false;
       this.btnAdd = true;
       this.opportunity = { detalles: [], valor: 0 };
+      this.btnGridBack = false;
       this.viewGrid = true;
+      this.btnBoard = true;
+      this.viewBoard = false;
+    },
+
+    viewOpportunityGridAndReload() {
+      this.viewForm = false;
+      this.btnVolver = false;
+      this.btnAdd = true;
+      this.opportunity = { detalles: [], valor: 0 };
+      this.btnGridBack = false;
+      this.viewGrid = true;
+      this.btnBoard = true;
+      this.viewBoard = false;
+      this.$refs.opportunityGrid.reloadOpportunityGrid();
+    },
+
+    viewopportunityBoard() {
+      this.viewForm = false;
+      this.btnVolver = false;
+      this.btnAdd = true;
+      this.btnGridBack = true;
+      this.opportunity = { detalles: [], valor: 0 };
+      this.viewGrid = false;
+      this.btnBoard = false;
+      this.viewBoard = true;
     },
 
     preparingEditOpportunity(data) {
@@ -85,7 +151,7 @@ export default {
 
     async insertNewOpportunity(data, details) {
       let detailList = [];
-      
+
       detailList = details.map(function (elem) {
         let returnObjeto = {
           idProducto: elem.idProducto,
@@ -146,7 +212,30 @@ export default {
   components: {
     "opportunity-grid": opportunityGrid,
     "opportunity-form": opportunityForm,
+    "opportunity-kanban": opportunityKanban,
     DxButton,
   },
 };
 </script>
+<style scoped>
+#squareLow {
+  background: #86c285;
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+#squareMid {
+  background: #edc578;
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+#squareHigh {
+  background: #ef7d59;
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+</style>

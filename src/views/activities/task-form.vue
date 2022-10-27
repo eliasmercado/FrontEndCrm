@@ -156,7 +156,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #squareOpen {
   background: #ff9747;
   width: 20px;
