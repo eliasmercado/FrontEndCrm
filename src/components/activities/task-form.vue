@@ -54,20 +54,75 @@
               <dx-label text="Fecha de Cierre" />
               <dx-required-rule message="Fecha de Cierre es requerido" />
             </dx-item>
+
+            <dx-item
+              editor-type="dxSelectBox"
+              data-field="idResponsable"
+              :editor-options="{
+                searchEnabled: true,
+                items: ownerData,
+                displayExpr: 'propietario',
+                valueExpr: 'idPropietario',
+              }"
+            >
+              <dx-label text="Responsable" />
+              <dx-required-rule message="Responsable es requerido" />
+            </dx-item>
+            <dx-item
+              editor-type="dxSelectBox"
+              data-field="asociarCon"
+              :editor-options="{
+                showClearButton: true,
+                searchEnabled: true,
+                items: associateWithOptions,
+                onValueChanged: changeAssociateWith,
+              }"
+            >
+              <dx-label text="Asociar con" />
+            </dx-item>
+            <dx-item
+              editor-type="dxSelectBox"
+              data-field="idContactoAsociado"
+              :visible="isContact"
+              :editor-options="{
+                searchEnabled: true,
+                items: contacts,
+                displayExpr: 'nombre',
+                valueExpr: 'idContacto',
+              }"
+            >
+              <dx-label text="Contacto Asociado" />
+              <dx-required-rule message="Contacto Asociado es requerido" />
+            </dx-item>
+            <dx-item
+              editor-type="dxSelectBox"
+              data-field="idEmpresaAsociada"
+              :visible="isCompany"
+              :editor-options="{
+                searchEnabled: true,
+                items: companies,
+                displayExpr: 'nombre',
+                valueExpr: 'idEmpresa',
+              }"
+            >
+              <dx-label text="Empresa Asociada" />
+              <dx-required-rule message="Empresa Asociada es requerida" />
+            </dx-item>
+            <dx-item
+              editor-type="dxSelectBox"
+              data-field="idOportunidadAsociada"
+              :visible="isOpportunity"
+              :editor-options="{
+                searchEnabled: true,
+                items: oportunities,
+                displayExpr: 'nombre',
+                valueExpr: 'idOportunidad',
+              }"
+            >
+              <dx-label text="Oportunidad Asociada" />
+              <dx-required-rule message="Oportunidad Asociada es requerida" />
+            </dx-item>
           </dx-group-item>
-          <dx-item
-            editor-type="dxSelectBox"
-            data-field="idResponsable"
-            :editor-options="{
-              searchEnabled: true,
-              items: ownerData,
-              displayExpr: 'propietario',
-              valueExpr: 'idPropietario',
-            }"
-          >
-            <dx-label text="Responsable" />
-            <dx-required-rule message="Responsable es requerido" />
-          </dx-item>
           <dx-button-item horizontal-alignment="left">
             <dx-button-options
               type="default"
@@ -114,6 +169,13 @@ export default {
       ownerData: [],
       taskTypes: [],
       taskStatuses: [],
+      associateWithOptions: ["Contacto", "Empresa", "Oportunidad"],
+      isContact: false,
+      isCompany: false,
+      isOpportunity: false,
+      contacts: [],
+      companies: [],
+      oportunities: [],
     };
   },
   methods: {
@@ -156,6 +218,74 @@ export default {
         });
     },
 
+    changeAssociateWith() {
+      if (this.task.asociarCon == "Contacto") {
+        this.getContacts();
+        this.isContact = true;
+        this.isCompany = false;
+        this.isOpportunity = false;
+      } else if (this.task.asociarCon == "Empresa") {
+        this.getCompanies();
+        this.isContact = false;
+        this.isCompany = true;
+        this.isOpportunity = false;
+      } else if (this.task.asociarCon == "Oportunidad") {
+        this.getOpportunities();
+        this.isContact = false;
+        this.isCompany = false;
+        this.isOpportunity = true;
+      } else {
+        this.isContact = false;
+        this.isCompany = false;
+        this.isOpportunity = false;
+      }
+    },
+
+    async getContacts() {
+      let token = auth.getAuthorizationToken();
+
+      await api
+        .get("/tarea/contacto", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          this.contacts = response.data.data;
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+    },
+
+    async getCompanies() {
+      let token = auth.getAuthorizationToken();
+
+      await api
+        .get("/tarea/empresa", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          this.companies = response.data.data;
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+    },
+
+    async getOpportunities() {
+      let token = auth.getAuthorizationToken();
+
+      await api
+        .get("/tarea/oportunidad", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          this.oportunities = response.data.data;
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+    },
+
     handleSubmit(e) {
       e.preventDefault();
       if (this.task.fechaInicio > this.task.fechaCierre) {
@@ -171,6 +301,7 @@ export default {
   },
 
   async created() {
+    this.changeAssociateWith();
     this.getOwnerData();
     let user = auth.getUser();
     this.task.idResponsable = user.data.idUsuario;
