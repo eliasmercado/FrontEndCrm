@@ -47,19 +47,22 @@
       v-if="btnVolver"
       icon="back"
       text="Volver"
-      @click="viewTaskGrid"
+      @click="changeCurrentComponent"
     />
     <br v-if="btnVolver" />
     <br v-if="btnVolver" />
 
     <task-grid
-      v-show="viewGrid"
+      v-if="viewGrid"
       ref="taskGrid"
       @before-edit="preparingEditTask"
+      @view-info="viewTaskInfo"
     />
     <task-form v-if="viewForm" :task="task" @insert="insertTask" />
 
-    <scheduler-task v-if="viewScheduler" />
+    <scheduler-task v-if="viewScheduler" @view-info="viewTaskInfo" />
+
+    <task-info v-if="viewInfo" :taskId="taskInfoId"></task-info>
   </div>
 </template>
 
@@ -68,9 +71,15 @@ import DxButton from "devextreme-vue/button";
 import taskGrid from "@/components/activities/task-grid.vue";
 import taskForm from "@/components/activities/task-form.vue";
 import schedulerTask from "@/components/activities/scheduler-task.vue";
+import taskInfo from "@/components/activities/task-info.vue";
 import notify from "devextreme/ui/notify";
 import api from "@/scripts/api";
 import auth from "@/auth";
+
+const TASK_GRID = "taskGrid";
+const TASK_FORM = "taskForm";
+const TASK_SCHEDULER = "taskScheduler";
+const TASK_INFO = "taskInfo";
 
 export default {
   data() {
@@ -83,11 +92,28 @@ export default {
       btnScheduler: true,
       btnGridBack: false,
       task: {},
+      viewInfo: false,
+      currentComponente: null,
+      oldComponente: null,
+      TASK_GRID,
+      TASK_FORM,
+      TASK_SCHEDULER,
+      TASK_INFO,
+      taskInfoId: 0,
     };
   },
 
   methods: {
+    changeCurrentComponent() {
+      if (this.oldComponente == TASK_FORM) this.viewTaskForm();
+      else if (this.oldComponente == TASK_GRID || this.oldComponente === null)
+        this.viewTaskGrid();
+      else if (this.oldComponente == TASK_SCHEDULER) this.viewTaskScheduler();
+    },
+
     viewTaskForm() {
+      this.oldComponente = this.currentComponente;
+      this.currentComponente = TASK_FORM;
       this.viewForm = true;
       this.viewGrid = false;
       this.btnVolver = true;
@@ -95,9 +121,12 @@ export default {
       this.btnGridBack = false;
       this.btnScheduler = false;
       this.viewScheduler = false;
+      this.viewInfo = false;
     },
 
     viewTaskGrid() {
+      this.oldComponente = this.currentComponente;
+      this.currentComponente = TASK_GRID;
       this.viewForm = false;
       this.btnVolver = false;
       this.btnAdd = true;
@@ -106,9 +135,12 @@ export default {
       this.viewGrid = true;
       this.btnScheduler = true;
       this.viewScheduler = false;
+      this.viewInfo = false;
     },
 
     viewTaskScheduler() {
+      this.oldComponente = this.currentComponente;
+      this.currentComponente = TASK_SCHEDULER;
       this.viewForm = false;
       this.btnVolver = false;
       this.btnAdd = true;
@@ -117,6 +149,21 @@ export default {
       this.viewGrid = false;
       this.btnScheduler = false;
       this.viewScheduler = true;
+      this.viewInfo = false;
+    },
+
+    viewTaskInfo(taskId) {
+      this.taskInfoId = taskId;
+      this.oldComponente = this.currentComponente;
+      this.currentComponente = TASK_INFO;
+      this.viewForm = false;
+      this.viewGrid = false;
+      this.btnVolver = true;
+      this.btnAdd = false;
+      this.btnGridBack = false;
+      this.btnScheduler = false;
+      this.viewScheduler = false;
+      this.viewInfo = true;
     },
 
     preparingEditTask(data) {
@@ -151,6 +198,7 @@ export default {
     "task-grid": taskGrid,
     "task-form": taskForm,
     "scheduler-task": schedulerTask,
+    "task-info": taskInfo,
     DxButton,
   },
 };

@@ -130,7 +130,6 @@ export default {
         key: "idTarea",
         load: () => this.sendRequest("/tarea"),
       }),
-      viewTaskInfo: false,
       taskInfo: {},
     };
   },
@@ -152,8 +151,8 @@ export default {
     },
 
     showTaskInfo(e) {
-      this.viewTaskInfo = e.row.data;
-      this.viewTaskInfo = true;
+      let taskId = e.row.data.idTarea;
+      this.$emit("view-info", taskId);
     },
 
     reloadTaskGrid() {

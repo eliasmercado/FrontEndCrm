@@ -87,7 +87,7 @@ export default {
     },
 
     formOpening(e) {
-      console.log(e);
+      this.$emit("view-info", e.appointmentData.idTarea);
       e.cancel = true;
     },
   },
