@@ -172,7 +172,6 @@ export default {
     },
 
     async insertTask(data) {
-      console.log(data);
       //si el id no existe vamos a llamar a insertar
       if (typeof data.idTarea === "undefined") {
         this.insertNewTask(data);
@@ -182,13 +181,35 @@ export default {
     },
 
     async insertNewTask(data) {
-      console.log("vamos a insertar");
+      let token = auth.getAuthorizationToken();
+
+      await api
+        .post("/tarea", data, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          notify(response.data.data, "success", 2000);
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+
       this.viewTaskGrid();
       this.$refs.taskGrid.reloadTaskGrid();
     },
 
     async editTask(data) {
-      console.log("vamos a editar");
+      let token = auth.getAuthorizationToken();
+      await api
+        .put("/tarea/" + data.idTarea, data, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          notify(response.data.data, "success", 2000);
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
       this.viewTaskGrid();
       this.$refs.taskGrid.reloadTaskGrid();
     },

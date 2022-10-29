@@ -290,7 +290,7 @@ export default {
       e.preventDefault();
       if (this.task.fechaInicio > this.task.fechaCierre) {
         notify(
-          "La fecha de cierre no puede ser menor a la fecha de inicio.",
+          "La fecha de cierre no puede ser menor a la fecha de inicio",
           "error",
           2000
         );
