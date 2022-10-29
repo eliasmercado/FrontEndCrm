@@ -178,7 +178,13 @@ export default {
 
     async showTaskForm(e) {
       let task = await this.getTask(e.row.data.idTarea);
-      this.$emit("before-edit", task);
+      let user = auth.getUser();
+      //Solo el usuario responsable puede editar su tarea.
+      if (task.idResponsable != user.data.idUsuario) {
+          notify("Sólo el responsable puede editar la tarea", "error", 2000);
+      } else {
+        this.$emit("before-edit", task);
+      }
     },
   },
 };
