@@ -53,8 +53,8 @@
     <br v-if="btnVolver" />
 
     <task-grid
-      v-if="viewGrid"
-      ref="taskGrid"
+      v-show="viewGrid"
+      ref="refTaskGrid"
       @before-edit="preparingEditTask"
       @view-info="viewTaskInfo"
     />
@@ -195,7 +195,7 @@ export default {
         });
 
       this.viewTaskGrid();
-      this.$refs.taskGrid.reloadTaskGrid();
+      this.$refs.refTaskGrid.reloadTaskGrid();
     },
 
     async editTask(data) {
@@ -211,7 +211,7 @@ export default {
           notify(error.response.data.error.message, "error", 2000);
         });
       this.viewTaskGrid();
-      this.$refs.taskGrid.reloadTaskGrid();
+      this.$refs.refTaskGrid.reloadTaskGrid();
     },
   },
 

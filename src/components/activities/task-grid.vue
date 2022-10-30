@@ -75,9 +75,36 @@
           :on-click="showTaskInfo"
         />
         <dx-button icon="edit" hint="Editar" :on-click="showTaskForm" />
-        <dx-button icon="trash" hint="Eliminar" :on-click="null" />
+        <dx-button icon="trash" hint="Eliminar" :on-click="showPopupDeleteConfirm" />
       </dx-column>
     </dx-data-grid>
+
+    <dx-popup
+      :visible="showDeleteConfirm"
+      :drag-enabled="false"
+      :hide-on-outside-click="false"
+      :show-close-button="false"
+      :show-title="false"
+      :width="350"
+      :height="110"
+    >
+      <dx-position at="center" my="center" />
+      <dx-toolbar-item
+        widget="dxButton"
+        toolbar="bottom"
+        location="center"
+        :options="deleteButtonOptions"
+      />
+      <dx-toolbar-item
+        widget="dxButton"
+        toolbar="bottom"
+        location="center"
+        :options="noDeleteButtonOptions"
+      />
+      <p>
+        ¿Está seguro que desea eliminar este registro?
+      </p>
+    </dx-popup>
   </div>
 </template>
 <script>
@@ -91,13 +118,13 @@ import {
   DxButton,
   DxLookup,
   DxForm,
-  DxPopup,
   DxTexts,
   DxToolbar,
   DxSearchPanel,
   DxItem as DxGridItem,
   DxHeaderFilter,
 } from "devextreme-vue/data-grid";
+import { DxPopup, DxPosition, DxToolbarItem } from "devextreme-vue/popup";
 import { DxItem } from "devextreme-vue/form";
 import notify from "devextreme/ui/notify";
 import api from "@/scripts/api";
@@ -122,6 +149,8 @@ export default {
     DxSearchPanel,
     DxGridItem,
     DxHeaderFilter,
+    DxPosition,
+    DxToolbarItem,
   },
 
   data() {
@@ -131,6 +160,20 @@ export default {
         load: () => this.sendRequest("/tarea"),
       }),
       taskInfo: {},
+      taskIdToDelete: null,
+      showDeleteConfirm: false,
+      deleteButtonOptions: {
+        text: "Sí",
+        onClick: () => {
+          this.deleteTask();
+        },
+      },
+      noDeleteButtonOptions: {
+        text: "No",
+        onClick: () => {
+          this.showDeleteConfirm = false;
+        },
+      },
     };
   },
 
@@ -181,10 +224,32 @@ export default {
       let user = auth.getUser();
       //Solo el usuario responsable puede editar su tarea.
       if (task.idResponsable != user.data.idUsuario) {
-          notify("Sólo el responsable puede editar la tarea", "error", 2000);
+        notify("Sólo el responsable puede editar la tarea", "error", 2000);
       } else {
         this.$emit("before-edit", task);
       }
+    },
+
+    showPopupDeleteConfirm(e) {
+      this.taskIdToDelete = e.row.data.idTarea;
+      this.showDeleteConfirm = true;
+    },
+
+    async deleteTask() {
+      let token = auth.getAuthorizationToken();
+
+      await api
+        .delete("/tarea/" + this.taskIdToDelete, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          notify(response.data.data, "success", 2000);
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+      this.showDeleteConfirm = false;
+      this.tasksData.reload();
     },
   },
 };
