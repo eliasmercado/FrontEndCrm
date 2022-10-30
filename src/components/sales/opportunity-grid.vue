@@ -1,7 +1,6 @@
 <template>
   <div>
     <dx-data-grid
-      v-show="!viewOpportunityInfo"
       class="dx-card wide-card"
       :data-source="opportunitiesData"
       :show-column-lines="false"
@@ -42,7 +41,12 @@
         :hiding-priority="6"
       >
       </dx-column>
-      <dx-column data-field="prioridad" caption="Prioridad" :hiding-priority="2"> </dx-column>
+      <dx-column
+        data-field="prioridad"
+        caption="Prioridad"
+        :hiding-priority="2"
+      >
+      </dx-column>
       <dx-column
         data-field="tipoCliente"
         caption="Tipo Cliente"
@@ -129,7 +133,6 @@ export default {
         key: "idOportunidad",
         load: () => this.sendRequest("/oportunidad"),
       }),
-      viewOpportunityInfo: false,
       opportunityInfo: {},
     };
   },
@@ -154,8 +157,8 @@ export default {
     },
 
     showOpportunityInfo(e) {
-      this.opportunityInfo = e.row.data;
-      this.viewOpportunityInfo = true;
+      let opportunityId = e.row.data.idOportunidad;
+      this.$emit("view-info", opportunityId);
     },
 
     async getOpportunity(opportunityId) {

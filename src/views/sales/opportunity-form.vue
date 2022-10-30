@@ -49,7 +49,7 @@
       v-if="btnVolver"
       icon="back"
       text="Volver"
-      @click="viewOpportunityGrid"
+      @click="changeCurrentComponent"
     />
     <br v-if="btnVolver" />
     <br v-if="btnVolver" />
@@ -57,6 +57,7 @@
     <opportunity-grid
       v-show="viewGrid"
       ref="opportunityGrid"
+      @view-info="viewOpportunityInfo"
       @before-edit="preparingEditOpportunity"
     />
     <opportunity-form
@@ -64,7 +65,15 @@
       :opportunity="opportunity"
       @insert="insertOpportunity"
     />
-    <opportunity-kanban v-if="viewBoard"></opportunity-kanban>
+    <opportunity-kanban
+      v-if="viewBoard"
+      @view-info="viewOpportunityInfo"
+    ></opportunity-kanban>
+
+    <opportunity-info
+      v-if="viewInfo"
+      :opportunityId="opportunityInfoId"
+    ></opportunity-info>
   </div>
 </template>
 
@@ -73,9 +82,15 @@ import DxButton from "devextreme-vue/button";
 import opportunityGrid from "@/components/sales/opportunity-grid.vue";
 import opportunityForm from "@/components/sales/opportunity-form.vue";
 import opportunityKanban from "@/components/sales/opportunity-kanban.vue";
+import opportunityInfo from "@/components/sales/opportunity-info.vue";
 import notify from "devextreme/ui/notify";
 import api from "@/scripts/api";
 import auth from "@/auth";
+
+const OP_GRID = "opGrid";
+const OP_FORM = "opForm";
+const OP_BOARD = "opScheduler";
+const OP_INFO = "opInfo";
 
 export default {
   data() {
@@ -88,10 +103,28 @@ export default {
       viewBoard: false,
       btnBoard: true,
       btnGridBack: false,
+      viewInfo: false,
+      currentComponente: null,
+      oldComponente: null,
+      OP_GRID,
+      OP_FORM,
+      OP_BOARD,
+      OP_INFO,
+      opportunityInfoId: 0,
+      viewInfo: false,
     };
   },
   methods: {
+    changeCurrentComponent() {
+      if (this.oldComponente == OP_FORM) this.viewOpportunityForm();
+      else if (this.oldComponente == OP_GRID || this.oldComponente === null)
+        this.viewOpportunityGrid();
+      else if (this.oldComponente == OP_BOARD) this.viewopportunityBoard();
+    },
+
     viewOpportunityForm() {
+      this.oldComponente = this.currentComponente;
+      this.currentComponente = OP_FORM;
       this.viewForm = true;
       this.viewGrid = false;
       this.btnVolver = true;
@@ -99,9 +132,12 @@ export default {
       this.btnGridBack = false;
       this.btnBoard = false;
       this.viewBoard = false;
+      this.viewInfo = false;
     },
 
     viewOpportunityGrid() {
+      this.oldComponente = this.currentComponente;
+      this.currentComponente = OP_GRID;
       this.viewForm = false;
       this.btnVolver = false;
       this.btnAdd = true;
@@ -110,9 +146,12 @@ export default {
       this.viewGrid = true;
       this.btnBoard = true;
       this.viewBoard = false;
+      this.viewInfo = false;
     },
 
     viewOpportunityGridAndReload() {
+      this.oldComponente = this.currentComponente;
+      this.currentComponente = OP_GRID;
       this.viewForm = false;
       this.btnVolver = false;
       this.btnAdd = true;
@@ -121,10 +160,13 @@ export default {
       this.viewGrid = true;
       this.btnBoard = true;
       this.viewBoard = false;
+      this.viewInfo = false;
       this.$refs.opportunityGrid.reloadOpportunityGrid();
     },
 
     viewopportunityBoard() {
+      this.oldComponente = this.currentComponente;
+      this.currentComponente = OP_BOARD;
       this.viewForm = false;
       this.btnVolver = false;
       this.btnAdd = true;
@@ -133,6 +175,21 @@ export default {
       this.viewGrid = false;
       this.btnBoard = false;
       this.viewBoard = true;
+      this.viewInfo = false;
+    },
+
+    viewOpportunityInfo(opportunityId) {
+      this.opportunityInfoId = opportunityId;
+      this.oldComponente = this.currentComponente;
+      this.currentComponente = OP_INFO;
+      this.viewForm = false;
+      this.viewGrid = false;
+      this.btnVolver = true;
+      this.btnAdd = false;
+      this.btnGridBack = false;
+      this.btnBoard = false;
+      this.viewBoard = false;
+      this.viewInfo = true;
     },
 
     preparingEditOpportunity(data) {
@@ -213,6 +270,7 @@ export default {
     "opportunity-grid": opportunityGrid,
     "opportunity-form": opportunityForm,
     "opportunity-kanban": opportunityKanban,
+    "opportunity-info": opportunityInfo,
     DxButton,
   },
 };

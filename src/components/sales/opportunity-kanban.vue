@@ -21,6 +21,7 @@
             v-for="opportunity in list"
             :key="opportunity.idOportunidad"
             class="card dx-card dx-theme-text-color dx-theme-background-color"
+            @click="viewOpportunityInfo(opportunity.idOportunidad)"
           >
             <div :class="['card-priority', getPriorityClass(opportunity)]" />
             <div class="card-subject">{{ opportunity.nombre }}</div>
@@ -122,7 +123,7 @@ export default {
       let data = e.itemData;
       //si no es un cambio de estado no hacemos la llamada al Back.
       if (typeof stage === "undefined") return;
-      
+
       api
         .put(
           "/oportunidad/actualizar-etapa/" +
@@ -146,6 +147,10 @@ export default {
 
     getPriorityClass(opportunity) {
       return `priority-${opportunity.prioridad}`;
+    },
+
+    viewOpportunityInfo(idOportunidad) {
+      this.$emit("view-info", idOportunidad);
     },
   },
 };
