@@ -62,7 +62,11 @@
 
     <scheduler-task v-if="viewScheduler" @view-info="viewTaskInfo" />
 
-    <task-info v-if="viewInfo" :taskId="taskInfoId"></task-info>
+    <task-info
+      @hidden-button-add="updateViewBtnAdd"
+      v-if="viewInfo"
+      :taskId="taskInfoId"
+    ></task-info>
   </div>
 </template>
 
@@ -164,6 +168,10 @@ export default {
       this.btnScheduler = false;
       this.viewScheduler = false;
       this.viewInfo = true;
+    },
+
+    updateViewBtnAdd(isHidden) {
+      this.btnVolver = !isHidden;
     },
 
     preparingEditTask(data) {
