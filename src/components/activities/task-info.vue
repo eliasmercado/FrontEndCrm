@@ -90,6 +90,7 @@
         </template>
         <template #closeTaskTemplate>
           <dx-button
+            v-if="taskInfo.estado == 'Abierta'"
             text="Finalizar Tarea"
             type="default"
             @click="closeTask"
@@ -261,8 +262,8 @@
             <dx-simple-item template="startDateTemplate" />
             <dx-simple-item template="endDateTemplate" />
             <dx-simple-item template="ownerTemplate" />
-            <dx-simple-item template="closeTaskTemplate" />
-          </dx-group-item>
+<!--             <dx-simple-item template="closeTaskTemplate" />
+ -->          </dx-group-item>
         </dx-group-item>
         <dx-group-item
           caption="Contacto Asociado"
@@ -517,7 +518,20 @@ export default {
 
     viewOpportunity() {},
 
-    closeTask() {},
+    closeTask() {
+      let token = auth.getAuthorizationToken();
+
+      api
+        .put("/tarea/cerrar-tarea/" + this.taskInfo.idTarea, {}, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          this.taskInfo.estado = "Cerrada";
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+    },
   },
   created() {
     this.getTaskInfo();
