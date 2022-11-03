@@ -25,6 +25,7 @@
         :calculate-cell-value="calculateCellValue"
         caption="Nombre Completo"
         :allow-sorting="false"
+        :allowFiltering="false"
         :hiding-priority="5"
       />
       <dx-column data-field="idUsuario" :visible="false" />
@@ -56,6 +57,8 @@
       <dx-column
         data-field="direccion"
         caption="Dirección"
+        :allow-sorting="false"
+        :allowFiltering="false"
         :hiding-priority="1"
       >
         <dx-required-rule />
@@ -64,6 +67,7 @@
         data-field="idPerfil"
         caption="Perfil"
         :allow-sorting="false"
+        :allowFiltering="false"
         :hiding-priority="4"
       >
         <dx-required-rule />
