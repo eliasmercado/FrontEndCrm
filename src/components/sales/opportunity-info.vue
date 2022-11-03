@@ -225,15 +225,32 @@
 
         <!-- Seccion para detalle de la oportunidad -->
         <template #detailTemplate>
-          <div>
-            <div>Nombre</div>
-            <dx-text-box
-              :read-only="true"
-              :hover-state-enabled="false"
-              styling-mode="underlined"
-              :value="''"
+          <dx-data-grid
+            id="productDetail"
+            :show-borders="true"
+            :data-source="opportunityInfo.detalles"
+          >
+            <dx-column
+              caption="Producto"
+              data-field="producto"
+              :allow-sorting="false"
+              :allow-header-filtering="false"
             />
-          </div>
+            <dx-column
+              data-field="cantidad"
+              caption="Cantidad"
+              alignment="left"
+              :allow-sorting="false"
+              :allow-header-filtering="false"
+            />
+            <dx-column type="buttons">
+              <dx-button
+                icon="info"
+                hint="Ver información"
+                :on-click="showProductInfo"
+              />
+            </dx-column>
+          </dx-data-grid>
         </template>
         <!--Fin de seccion para detalle de la oportunidad  -->
         <dx-group-item>
@@ -293,14 +310,45 @@
       :states="stateData"
       v-if="viewCompanyInfo"
     />
+
+    <dx-popup
+      :visible="viewProductInfo"
+      :drag-enabled="false"
+      :show-close-button="true"
+      :show-title="true"
+      :width="400"
+      :height="280"
+      container=".dx-viewport"
+      title="Información del Producto"
+      :on-hiding="closeInfoProduct"
+    >
+      <dx-position at="bottom" my="center" :of="positionOf" />
+
+      <p>
+        Descripción: <span>{{ productInfo.descripcion }}</span>
+      </p>
+      <p>
+        Precio: <span>{{ productInfo.precio }}</span>
+      </p>
+      <p>
+        Categoría: <span>{{ productInfo.categoria }}</span>
+      </p>
+      <p>
+        Subcategoría: <span>{{ productInfo.subcategoria }}</span>
+      </p>
+      <p>
+        Marca: <span>{{ productInfo.marca }}</span>
+      </p>
+    </dx-popup>
   </div>
 </template>
 
 <script>
 import { DxForm, DxSimpleItem, DxGroupItem } from "devextreme-vue/form";
+import { DxDataGrid, DxColumn, DxButton } from "devextreme-vue/data-grid";
+import { DxPopup, DxPosition } from "devextreme-vue/popup";
 import DxTextBox from "devextreme-vue/text-box";
 import DxDateBox from "devextreme-vue/date-box";
-import DxButton from "devextreme-vue/button";
 import ContactInfo from "@/components/contacts/contact-info";
 import CompanyInfo from "@/components/contacts/company-info";
 import notify from "devextreme/ui/notify";
@@ -313,10 +361,14 @@ export default {
     DxSimpleItem,
     DxGroupItem,
     DxTextBox,
+    DxDataGrid,
+    DxColumn,
     DxDateBox,
     DxButton,
     ContactInfo,
     CompanyInfo,
+    DxPopup,
+    DxPosition,
   },
   data() {
     return {
@@ -332,6 +384,9 @@ export default {
       viewContactInfo: false,
       viewCompanyInfo: false,
       btnVolverInfo: false,
+      viewProductInfo: false,
+      productInfo: {},
+      positionOf: "",
     };
   },
 
@@ -360,6 +415,29 @@ export default {
       this.viewOpportunityInfo = false;
       this.viewContactInfo = false;
       this.viewCompanyInfo = true;
+    },
+
+    async showProductInfo(e) {
+      let productId = e.row.data.idProducto;
+
+      let token = auth.getAuthorizationToken();
+
+      await api
+        .get("/producto/info/" + productId, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          this.productInfo = response.data.data;
+          this.positionOf = "#productDetail";
+          this.viewProductInfo = true;
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+    },
+
+    closeInfoProduct() {
+      this.viewProductInfo = false;
     },
 
     async getOpportunityInfo() {
