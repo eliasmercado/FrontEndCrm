@@ -14,6 +14,7 @@ import ContactsLead from "./views/leads/contacts-form"
 import CompanyLead from "./views/leads/company-form"
 import BranchForm from "./views/sales/branch-form"
 import TaskForm from "./views/activities/task-form"
+import UsersForm from "./views/security/users-form"
 
 Vue.use(Router);
 
@@ -117,6 +118,15 @@ const router = new Router({
       components: {
         layout: defaultLayout,
         content: TaskForm
+      },
+    },
+    {
+      path: "/usuarios",
+      name: "Usuarios",
+      meta: { requiresAuth: true },
+      components: {
+        layout: defaultLayout,
+        content: UsersForm
       },
     },
     {
