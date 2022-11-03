@@ -244,7 +244,7 @@
               :allow-header-filtering="false"
             />
             <dx-column type="buttons">
-              <dx-button
+              <dx-grid-button
                 icon="info"
                 hint="Ver información"
                 :on-click="showProductInfo"
@@ -345,10 +345,15 @@
 
 <script>
 import { DxForm, DxSimpleItem, DxGroupItem } from "devextreme-vue/form";
-import { DxDataGrid, DxColumn, DxButton } from "devextreme-vue/data-grid";
+import {
+  DxDataGrid,
+  DxColumn,
+  DxButton as DxGridButton,
+} from "devextreme-vue/data-grid";
 import { DxPopup, DxPosition } from "devextreme-vue/popup";
 import DxTextBox from "devextreme-vue/text-box";
 import DxDateBox from "devextreme-vue/date-box";
+import DxButton from "devextreme-vue/button";
 import ContactInfo from "@/components/contacts/contact-info";
 import CompanyInfo from "@/components/contacts/company-info";
 import notify from "devextreme/ui/notify";
@@ -369,6 +374,7 @@ export default {
     CompanyInfo,
     DxPopup,
     DxPosition,
+    DxGridButton,
   },
   data() {
     return {
