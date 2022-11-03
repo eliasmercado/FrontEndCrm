@@ -4,21 +4,65 @@
       v-if="btnVolverInfo"
       icon="back"
       text="Volver"
-      @click="showOpportunityInfo"
+      @click="showTaskInfo"
     />
     <br v-if="btnVolverInfo" />
     <br v-if="btnVolverInfo" />
 
-    <div id="form-container" v-if="viewOpportunityInfo">
-      <dx-form id="form" :col-count="3" :form-data="opportunityInfo">
-        <template #nameTemplate>
+    <div id="form-container" v-if="viewTaskInfo">
+      <dx-form id="form" :col-count="2" :form-data="taskInfo">
+        <template #titleTemplate>
           <div>
-            <div>Nombre</div>
+            <div>Título</div>
             <dx-text-box
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="opportunityInfo.nombre"
+              :value="taskInfo.titulo"
+            />
+          </div>
+        </template>
+        <template #descriptionTemplate>
+          <div>
+            <div>Descripción</div>
+            <dx-text-box
+              :read-only="true"
+              :hover-state-enabled="false"
+              styling-mode="underlined"
+              :value="taskInfo.descripcion"
+            />
+          </div>
+        </template>
+        <template #typeTemplate>
+          <div>
+            <div>Tipo</div>
+            <dx-text-box
+              :read-only="true"
+              :hover-state-enabled="false"
+              styling-mode="underlined"
+              :value="taskInfo.tipo"
+            />
+          </div>
+        </template>
+        <template #statusTemplate>
+          <div>
+            <div>Estado</div>
+            <dx-text-box
+              :read-only="true"
+              :hover-state-enabled="false"
+              styling-mode="underlined"
+              :value="taskInfo.estado"
+            />
+          </div>
+        </template>
+        <template #startDateTemplate>
+          <div>
+            <div>Fecha de Inicio</div>
+            <dx-text-box
+              :read-only="true"
+              :hover-state-enabled="false"
+              styling-mode="underlined"
+              :value="taskInfo.fechaInicio"
             />
           </div>
         </template>
@@ -29,99 +73,30 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="opportunityInfo.fechaCierre"
-            />
-          </div>
-        </template>
-        <template #stageTemplate>
-          <div>
-            <div>Etapa</div>
-            <dx-text-box
-              :read-only="true"
-              :hover-state-enabled="false"
-              styling-mode="underlined"
-              :value="opportunityInfo.etapa"
-            />
-          </div>
-        </template>
-        <template #valueTemplate>
-          <div>
-            <div>Valor</div>
-            <dx-text-box
-              :read-only="true"
-              :hover-state-enabled="false"
-              styling-mode="underlined"
-              :value="opportunityInfo.valor"
-            />
-          </div>
-        </template>
-        <template #clientTypeTemplate>
-          <div>
-            <div>Tipo de Cliente</div>
-            <dx-text-box
-              :read-only="true"
-              :hover-state-enabled="false"
-              styling-mode="underlined"
-              :value="opportunityInfo.tipoCliente"
-            />
-          </div>
-        </template>
-        <template #priorityTemplate>
-          <div>
-            <div>Prioridad</div>
-            <dx-text-box
-              :read-only="true"
-              :hover-state-enabled="false"
-              styling-mode="underlined"
-              :value="opportunityInfo.prioridad"
-            />
-          </div>
-        </template>
-        <template #sourceTemplate>
-          <div>
-            <div>Fuente</div>
-            <dx-text-box
-              :read-only="true"
-              :hover-state-enabled="false"
-              styling-mode="underlined"
-              :value="opportunityInfo.fuente"
-            />
-          </div>
-        </template>
-        <template #branchTemplate>
-          <div>
-            <div>Sucursal</div>
-            <dx-text-box
-              :read-only="true"
-              :hover-state-enabled="false"
-              styling-mode="underlined"
-              :value="opportunityInfo.sucursal"
-            />
-          </div>
-        </template>
-        <template #obsTemplate>
-          <div>
-            <div>Observacion</div>
-            <dx-text-box
-              :read-only="true"
-              :hover-state-enabled="false"
-              styling-mode="underlined"
-              :value="opportunityInfo.observacion"
+              :value="taskInfo.fechaCierre"
             />
           </div>
         </template>
         <template #ownerTemplate>
           <div>
-            <div>Propietario</div>
+            <div>Responsable</div>
             <dx-text-box
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="opportunityInfo.propietario"
+              :value="taskInfo.responsable"
             />
           </div>
         </template>
-
+        <template #closeTaskTemplate>
+          <dx-button
+            v-if="taskInfo.estado == 'Abierta'"
+            text="Finalizar Tarea"
+            type="default"
+            @click="closeTask"
+            styling-mode="outlined"
+          />
+        </template>
         <!-- Seccion para Contacto Asociado -->
         <template #contactNameTemplate>
           <div>
@@ -130,7 +105,7 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="opportunityInfo.contactoAsociado.nombreCompleto"
+              :value="taskInfo.contactoAsociado.nombreCompleto"
             />
           </div>
         </template>
@@ -141,7 +116,7 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="opportunityInfo.contactoAsociado.celular"
+              :value="taskInfo.contactoAsociado.celular"
             />
           </div>
         </template>
@@ -152,7 +127,7 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="opportunityInfo.contactoAsociado.email"
+              :value="taskInfo.contactoAsociado.email"
             />
           </div>
         </template>
@@ -175,7 +150,7 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="opportunityInfo.empresaAsociada.nombre"
+              :value="taskInfo.empresaAsociada.nombre"
             />
           </div>
         </template>
@@ -186,7 +161,7 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="opportunityInfo.empresaAsociada.celular"
+              :value="taskInfo.empresaAsociada.celular"
             />
           </div>
         </template>
@@ -197,7 +172,7 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="opportunityInfo.empresaAsociada.telefono"
+              :value="taskInfo.empresaAsociada.telefono"
             />
           </div>
         </template>
@@ -208,7 +183,7 @@
               :read-only="true"
               :hover-state-enabled="false"
               styling-mode="underlined"
-              :value="opportunityInfo.empresaAsociada.email"
+              :value="taskInfo.empresaAsociada.email"
             />
           </div>
         </template>
@@ -223,54 +198,78 @@
         </template>
         <!-- Fin seccion para empresa asociada -->
 
-        <!-- Seccion para detalle de la oportunidad -->
-        <template #detailTemplate>
-          <dx-data-grid
-            id="productDetail"
-            :show-borders="true"
-            :data-source="opportunityInfo.detalles"
-          >
-            <dx-column
-              caption="Producto"
-              data-field="producto"
-              :allow-sorting="false"
-              :allow-header-filtering="false"
+        <!-- Seccion para oportunidad Asociado -->
+        <template #opportunityNameTemplate>
+          <div>
+            <div>Nombre</div>
+            <dx-text-box
+              :read-only="true"
+              :hover-state-enabled="false"
+              styling-mode="underlined"
+              :value="taskInfo.oportunidadAsociada.nombre"
             />
-            <dx-column
-              data-field="cantidad"
-              caption="Cantidad"
-              alignment="left"
-              :allow-sorting="false"
-              :allow-header-filtering="false"
-            />
-            <dx-column type="buttons">
-              <dx-grid-button
-                icon="info"
-                hint="Ver información"
-                :on-click="showProductInfo"
-              />
-            </dx-column>
-          </dx-data-grid>
+          </div>
         </template>
-        <!--Fin de seccion para detalle de la oportunidad  -->
+        <template #opportunityStageTemplate>
+          <div>
+            <div>Etapa</div>
+            <dx-text-box
+              :read-only="true"
+              :hover-state-enabled="false"
+              styling-mode="underlined"
+              :value="taskInfo.oportunidadAsociada.etapa"
+            />
+          </div>
+        </template>
+        <template #opportunityValueTemplate>
+          <div>
+            <div>Valor</div>
+            <dx-text-box
+              :read-only="true"
+              :hover-state-enabled="false"
+              styling-mode="underlined"
+              :value="taskInfo.oportunidadAsociada.valor"
+            />
+          </div>
+        </template>
+        <template #opportunityContactTemplate>
+          <div>
+            <div>Contacto</div>
+            <dx-text-box
+              :read-only="true"
+              :hover-state-enabled="false"
+              styling-mode="underlined"
+              :value="taskInfo.oportunidadAsociada.contacto"
+            />
+          </div>
+        </template>
+        <template #opportunityViewTemplate>
+          <dx-button
+            text="Ver mas"
+            icon="plus"
+            type="default"
+            @click="showOpportunityInfo"
+            styling-mode="outlined"
+          />
+        </template>
+        <!-- Fin seccion para oportunidad asociada -->
         <dx-group-item>
-          <dx-group-item caption="Información de la Oportunidad" :col-count="1">
-            <dx-simple-item template="nameTemplate" />
+          <dx-group-item caption="Información de la Tarea" :col-count="1">
+            <dx-simple-item template="titleTemplate" />
+            <dx-simple-item template="descriptionTemplate" />
+            <dx-simple-item template="typeTemplate" />
+            <dx-simple-item template="statusTemplate" />
+            <dx-simple-item template="startDateTemplate" />
             <dx-simple-item template="endDateTemplate" />
-            <dx-simple-item template="stageTemplate" />
-            <dx-simple-item template="valueTemplate" />
-            <dx-simple-item template="clientTypeTemplate" />
-            <dx-simple-item template="priorityTemplate" />
-            <dx-simple-item template="sourceTemplate" />
-            <dx-simple-item template="branchTemplate" />
-            <dx-simple-item template="obsTemplate" />
             <dx-simple-item template="ownerTemplate" />
+            <!--             <dx-simple-item template="closeTaskTemplate" />
+ -->
           </dx-group-item>
         </dx-group-item>
         <dx-group-item
           caption="Contacto Asociado"
           :col-count="1"
-          v-if="opportunityInfo.tipoContacto == 'Contacto'"
+          v-if="taskInfo.asociarCon == 'Contacto'"
         >
           <dx-simple-item template="contactNameTemplate" />
           <dx-simple-item template="contactPhoneTemplate" />
@@ -280,7 +279,7 @@
         <dx-group-item
           caption="Empresa Asociada"
           :col-count="1"
-          v-if="opportunityInfo.tipoContacto == 'Empresa'"
+          v-if="taskInfo.asociarCon == 'Empresa'"
         >
           <dx-simple-item template="companyNameTemplate" />
           <dx-simple-item template="companyCellPhoneTemplate" />
@@ -288,8 +287,16 @@
           <dx-simple-item template="companyEmailTemplate" />
           <dx-simple-item template="companyViewTemplate" />
         </dx-group-item>
-        <dx-group-item caption="Detalles de la Oportunidad" :col-count="1">
-          <dx-simple-item template="detailTemplate" />
+        <dx-group-item
+          caption="Oportunidad Asociada"
+          :col-count="1"
+          v-if="taskInfo.asociarCon == 'Oportunidad'"
+        >
+          <dx-simple-item template="opportunityNameTemplate" />
+          <dx-simple-item template="opportunityStageTemplate" />
+          <dx-simple-item template="opportunityValueTemplate" />
+          <dx-simple-item template="opportunityContactTemplate" />
+          <dx-simple-item template="opportunityViewTemplate" />
         </dx-group-item>
       </dx-form>
     </div>
@@ -311,51 +318,21 @@
       v-if="viewCompanyInfo"
     />
 
-    <dx-popup
-      :visible="viewProductInfo"
-      :drag-enabled="false"
-      :show-close-button="true"
-      :show-title="true"
-      :width="400"
-      :height="280"
-      container=".dx-viewport"
-      title="Información del Producto"
-      :on-hiding="closeInfoProduct"
-    >
-      <dx-position at="bottom" my="center" :of="positionOf" />
-
-      <p>
-        Descripción: <span>{{ productInfo.descripcion }}</span>
-      </p>
-      <p>
-        Precio: <span>{{ productInfo.precio }}</span>
-      </p>
-      <p>
-        Categoría: <span>{{ productInfo.categoria }}</span>
-      </p>
-      <p>
-        Subcategoría: <span>{{ productInfo.subcategoria }}</span>
-      </p>
-      <p>
-        Marca: <span>{{ productInfo.marca }}</span>
-      </p>
-    </dx-popup>
+    <opportunity-info
+      v-if="viewOpportunityInfo"
+      :opportunityId="opportunityId"
+    />
   </div>
 </template>
 
 <script>
 import { DxForm, DxSimpleItem, DxGroupItem } from "devextreme-vue/form";
-import {
-  DxDataGrid,
-  DxColumn,
-  DxButton as DxGridButton,
-} from "devextreme-vue/data-grid";
-import { DxPopup, DxPosition } from "devextreme-vue/popup";
 import DxTextBox from "devextreme-vue/text-box";
 import DxDateBox from "devextreme-vue/date-box";
 import DxButton from "devextreme-vue/button";
 import ContactInfo from "@/components/contacts/contact-info";
 import CompanyInfo from "@/components/contacts/company-info";
+import OpportunityInfo from "@/components/sales/opportunity-info.vue";
 import notify from "devextreme/ui/notify";
 import api from "@/scripts/api";
 import auth from "@/auth";
@@ -366,19 +343,15 @@ export default {
     DxSimpleItem,
     DxGroupItem,
     DxTextBox,
-    DxDataGrid,
-    DxColumn,
     DxDateBox,
     DxButton,
     ContactInfo,
+    OpportunityInfo,
     CompanyInfo,
-    DxPopup,
-    DxPosition,
-    DxGridButton,
   },
   data() {
     return {
-      opportunityInfo: {},
+      taskInfo: {},
       cityData: [],
       stateData: [],
       documentsData: [],
@@ -386,75 +359,64 @@ export default {
       economicActivityData: [],
       contactInfo: {},
       companyInfo: {},
-      viewOpportunityInfo: true,
+      opportunityId: 0,
+      viewTaskInfo: true,
       viewContactInfo: false,
       viewCompanyInfo: false,
+      viewOpportunityInfo: false,
       btnVolverInfo: false,
-      viewProductInfo: false,
-      productInfo: {},
-      positionOf: "",
     };
   },
 
   methods: {
-    showOpportunityInfo() {
+    showTaskInfo() {
       this.btnVolverInfo = false;
       this.$emit("hidden-button-add", false);
-      this.viewOpportunityInfo = true;
+      this.viewTaskInfo = true;
       this.viewContactInfo = false;
       this.viewCompanyInfo = false;
+      this.viewOpportunityInfo = false;
     },
 
     async showContactInfo() {
       await this.viewContact();
       this.btnVolverInfo = true;
       this.$emit("hidden-button-add", true);
-      this.viewOpportunityInfo = false;
+      this.viewTaskInfo = false;
       this.viewContactInfo = true;
       this.viewCompanyInfo = false;
+      this.viewOpportunityInfo = false;
     },
 
     async showCompanyInfo() {
       await this.viewCompany();
       this.btnVolverInfo = true;
       this.$emit("hidden-button-add", true);
-      this.viewOpportunityInfo = false;
+      this.viewTaskInfo = false;
       this.viewContactInfo = false;
       this.viewCompanyInfo = true;
+      this.viewOpportunityInfo = false;
     },
 
-    async showProductInfo(e) {
-      let productId = e.row.data.idProducto;
+    async showOpportunityInfo() {
+      this.opportunityId = this.taskInfo.oportunidadAsociada.idOportunidad;
+      this.btnVolverInfo = true;
+      this.$emit("hidden-button-add", true);
+      this.viewTaskInfo = false;
+      this.viewContactInfo = false;
+      this.viewCompanyInfo = false;
+      this.viewOpportunityInfo = true;
+    },
 
+    async getTaskInfo() {
       let token = auth.getAuthorizationToken();
 
       await api
-        .get("/producto/info/" + productId, {
+        .get("/tarea/info/" + this.taskId, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
-          this.productInfo = response.data.data;
-          this.positionOf = "#productDetail";
-          this.viewProductInfo = true;
-        })
-        .catch((error) => {
-          notify(error.response.data.error.message, "error", 2000);
-        });
-    },
-
-    closeInfoProduct() {
-      this.viewProductInfo = false;
-    },
-
-    async getOpportunityInfo() {
-      let token = auth.getAuthorizationToken();
-
-      await api
-        .get("/oportunidad/info/" + this.opportunityId, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((response) => {
-          this.opportunityInfo = response.data.data;
+          this.taskInfo = response.data.data;
         })
         .catch((error) => {
           notify(error.response.data.error.message, "error", 2000);
@@ -472,7 +434,7 @@ export default {
       let token = auth.getAuthorizationToken();
 
       await api
-        .get("/contacto/" + this.opportunityInfo.contactoAsociado.idContacto, {
+        .get("/contacto/" + this.taskInfo.contactoAsociado.idContacto, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
@@ -566,7 +528,7 @@ export default {
       let token = auth.getAuthorizationToken();
 
       await api
-        .get("/empresa/" + this.opportunityInfo.empresaAsociada.idEmpresa, {
+        .get("/empresa/" + this.taskInfo.empresaAsociada.idEmpresa, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
@@ -576,13 +538,32 @@ export default {
           notify(error.response.data.error.message, "error", 2000);
         });
     },
+
+    closeTask() {
+      let token = auth.getAuthorizationToken();
+
+      api
+        .put(
+          "/tarea/cerrar-tarea/" + this.taskInfo.idTarea,
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        )
+        .then((response) => {
+          this.taskInfo.estado = "Cerrada";
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+    },
   },
   created() {
-    this.getOpportunityInfo();
+    this.getTaskInfo();
   },
 
   props: {
-    opportunityId: Number,
+    taskId: Number,
   },
 };
 </script>
