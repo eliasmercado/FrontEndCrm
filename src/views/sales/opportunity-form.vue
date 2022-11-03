@@ -72,6 +72,7 @@
 
     <opportunity-info
       v-if="viewInfo"
+      @hidden-button-add="updateViewBtnAdd"
       :opportunityId="opportunityInfoId"
     ></opportunity-info>
   </div>
@@ -190,6 +191,10 @@ export default {
       this.btnBoard = false;
       this.viewBoard = false;
       this.viewInfo = true;
+    },
+
+    updateViewBtnAdd(isHidden) {
+      this.btnVolver = !isHidden;
     },
 
     preparingEditOpportunity(data) {
