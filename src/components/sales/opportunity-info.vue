@@ -237,7 +237,7 @@
         </template>
         <!--Fin de seccion para detalle de la oportunidad  -->
         <dx-group-item>
-          <dx-group-item caption="Información de la Tarea" :col-count="1">
+          <dx-group-item caption="Información de la Oportunidad" :col-count="1">
             <dx-simple-item template="nameTemplate" />
             <dx-simple-item template="endDateTemplate" />
             <dx-simple-item template="stageTemplate" />

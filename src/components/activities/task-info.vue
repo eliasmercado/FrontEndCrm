@@ -248,7 +248,7 @@
             text="Ver mas"
             icon="plus"
             type="default"
-            @click="viewOpportunity"
+            @click="showOpportunityInfo"
             styling-mode="outlined"
           />
         </template>
@@ -262,8 +262,9 @@
             <dx-simple-item template="startDateTemplate" />
             <dx-simple-item template="endDateTemplate" />
             <dx-simple-item template="ownerTemplate" />
-<!--             <dx-simple-item template="closeTaskTemplate" />
- -->          </dx-group-item>
+            <!--             <dx-simple-item template="closeTaskTemplate" />
+ -->
+          </dx-group-item>
         </dx-group-item>
         <dx-group-item
           caption="Contacto Asociado"
@@ -316,6 +317,11 @@
       :states="stateData"
       v-if="viewCompanyInfo"
     />
+
+    <opportunity-info
+      v-if="viewOpportunityInfo"
+      :opportunityId="opportunityId"
+    />
   </div>
 </template>
 
@@ -326,6 +332,7 @@ import DxDateBox from "devextreme-vue/date-box";
 import DxButton from "devextreme-vue/button";
 import ContactInfo from "@/components/contacts/contact-info";
 import CompanyInfo from "@/components/contacts/company-info";
+import OpportunityInfo from "@/components/sales/opportunity-info.vue";
 import notify from "devextreme/ui/notify";
 import api from "@/scripts/api";
 import auth from "@/auth";
@@ -339,6 +346,7 @@ export default {
     DxDateBox,
     DxButton,
     ContactInfo,
+    OpportunityInfo,
     CompanyInfo,
   },
   data() {
@@ -351,9 +359,11 @@ export default {
       economicActivityData: [],
       contactInfo: {},
       companyInfo: {},
+      opportunityId: 0,
       viewTaskInfo: true,
       viewContactInfo: false,
       viewCompanyInfo: false,
+      viewOpportunityInfo: false,
       btnVolverInfo: false,
     };
   },
@@ -365,6 +375,7 @@ export default {
       this.viewTaskInfo = true;
       this.viewContactInfo = false;
       this.viewCompanyInfo = false;
+      this.viewOpportunityInfo = false;
     },
 
     async showContactInfo() {
@@ -374,6 +385,7 @@ export default {
       this.viewTaskInfo = false;
       this.viewContactInfo = true;
       this.viewCompanyInfo = false;
+      this.viewOpportunityInfo = false;
     },
 
     async showCompanyInfo() {
@@ -383,6 +395,17 @@ export default {
       this.viewTaskInfo = false;
       this.viewContactInfo = false;
       this.viewCompanyInfo = true;
+      this.viewOpportunityInfo = false;
+    },
+
+    async showOpportunityInfo() {
+      this.opportunityId = this.taskInfo.oportunidadAsociada.idOportunidad;
+      this.btnVolverInfo = true;
+      this.$emit("hidden-button-add", true);
+      this.viewTaskInfo = false;
+      this.viewContactInfo = false;
+      this.viewCompanyInfo = false;
+      this.viewOpportunityInfo = true;
     },
 
     async getTaskInfo() {
@@ -516,15 +539,17 @@ export default {
         });
     },
 
-    viewOpportunity() {},
-
     closeTask() {
       let token = auth.getAuthorizationToken();
 
       api
-        .put("/tarea/cerrar-tarea/" + this.taskInfo.idTarea, {}, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        .put(
+          "/tarea/cerrar-tarea/" + this.taskInfo.idTarea,
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        )
         .then((response) => {
           this.taskInfo.estado = "Cerrada";
         })
