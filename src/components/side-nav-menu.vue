@@ -20,6 +20,7 @@
 import DxTreeView from "devextreme-vue/ui/tree-view";
 import { sizes } from "../utils/media-query";
 import menu from "@/scripts/menu";
+import auth from "@/auth";
 
 export default {
   props: {
@@ -59,7 +60,8 @@ export default {
     },
 
     async loadMenu() {
-      this.navigation = await menu.loadMenuForUser(1);
+      let user = auth.getUser();
+      this.navigation = await menu.loadMenuForUser(user.data.idUsuario);
       this.items = this.navigation.map((item) => {
         if (item.path && !/^\//.test(item.path)) {
           item.path = `/${item.path}`;
