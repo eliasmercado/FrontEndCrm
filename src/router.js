@@ -16,6 +16,7 @@ import BranchForm from "./views/sales/branch-form"
 import TaskForm from "./views/activities/task-form"
 import UsersForm from "./views/security/users-form"
 import ChangePass from "./views/security/change-pass.vue"
+import ResetPass from "./views/security/reset-pass.vue"
 
 Vue.use(Router);
 
@@ -137,6 +138,15 @@ const router = new Router({
       components: {
         layout: defaultLayout,
         content: ChangePass
+      },
+    },
+    {
+      path: "/resetear-pass",
+      name: "Resetear Contraseña",
+      meta: { requiresAuth: true },
+      components: {
+        layout: defaultLayout,
+        content: ResetPass
       },
     },
     {
