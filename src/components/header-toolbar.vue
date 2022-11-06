@@ -7,11 +7,7 @@
         css-class="menu-button"
       >
         <template #default>
-          <dx-button
-            icon="menu"
-            styling-mode="text"
-            @click="toggleMenuFunc"
-          />
+          <dx-button icon="menu" styling-mode="text" @click="toggleMenuFunc" />
         </template>
       </dx-item>
 
@@ -38,17 +34,17 @@
               height="100%"
               styling-mode="text"
             >
-              <user-panel :user="user.data" :menu-items="userMenuItems" menu-mode="context" />
+              <user-panel
+                :user="user.data"
+                :menu-items="userMenuItems"
+                menu-mode="context"
+              />
             </dx-button>
           </div>
         </template>
       </dx-item>
       <template #menuUserItem>
-        <user-panel
-          :user="user"
-          :menu-items="userMenuItems"
-          menu-mode="list"
-        />
+        <user-panel :user="user" :menu-items="userMenuItems" menu-mode="list" />
       </template>
     </dx-toolbar>
   </header>
@@ -65,16 +61,16 @@ export default {
   props: {
     menuToggleEnabled: Boolean,
     toggleMenuFunc: Function,
-    logOutFunc: Function
+    logOutFunc: Function,
   },
   created() {
     this.user = auth.getUser();
   },
   data() {
     return {
-      user: { },
+      user: {},
       userMenuItems: [
- /*        {
+        /*        {
           text: "Profile",
           icon: "user",
           onClick: this.onProfileClick
@@ -82,10 +78,10 @@ export default {
         {
           text: "Cerrar Sesión",
           icon: "runner",
-          onClick: this.onLogoutClick
-        }
+          onClick: this.onLogoutClick,
+        },
       ],
-      title :"CRM"
+      title: "CRM",
     };
   },
   methods: {
@@ -93,22 +89,21 @@ export default {
       auth.logOut();
       this.$router.push({
         path: "/login",
-        query: { redirect: this.$route.path }
       });
     },
     onProfileClick() {
       this.$router.push({
         path: "/profile",
-        query: { redirect: this.$route.path }
+        query: { redirect: this.$route.path },
       });
-    }
+    },
   },
   components: {
     DxButton,
     DxToolbar,
     DxItem,
-    UserPanel
-  }
+    UserPanel,
+  },
 };
 </script>
 
