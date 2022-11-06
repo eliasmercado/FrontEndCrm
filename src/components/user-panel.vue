@@ -2,7 +2,7 @@
   <div class="user-panel">
     <div class="user-info">
       <div class="image-container">
-        <div class="user-image" />
+        <img src="../assets/default-user.png" class="img-fluid" alt="Responsive image">
       </div>
       <div class="user-name">{{user.userName}}</div>
     </div>
