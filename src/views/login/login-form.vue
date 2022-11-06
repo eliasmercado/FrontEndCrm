@@ -40,7 +40,7 @@
         >
         </dx-button-options>
       </dx-button-item>
-      <dx-item>
+<!--       <dx-item>
         <template #default>
           <div class="link">
             <router-link to="/reset-password"
@@ -48,7 +48,7 @@
             >
           </div>
         </template>
-      </dx-item>
+      </dx-item> -->
       <template #signInTemplate>
         <div>
           <span class="dx-button-text">
