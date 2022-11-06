@@ -1,6 +1,6 @@
 <template>
   <div class="content-block">
-    <h2>Resetar Contraseña</h2>
+    <h2>Resetear Contraseña</h2>
 
     <div id="form-container">
       <form @submit="handleSubmit">
