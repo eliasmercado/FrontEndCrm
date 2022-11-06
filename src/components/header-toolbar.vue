@@ -74,13 +74,13 @@ export default {
     return {
       user: { },
       userMenuItems: [
-        {
+ /*        {
           text: "Profile",
           icon: "user",
           onClick: this.onProfileClick
-        },
+        }, */
         {
-          text: "Logout",
+          text: "Cerrar Sesión",
           icon: "runner",
           onClick: this.onLogoutClick
         }
