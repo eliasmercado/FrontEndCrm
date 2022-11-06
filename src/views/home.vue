@@ -132,7 +132,7 @@
     </dx-chart>
     <dx-button
       :visible="!isFirstLevel"
-      text="Back"
+      text="Volver"
       icon="chevronleft"
       @click="onButtonClick"
     />
