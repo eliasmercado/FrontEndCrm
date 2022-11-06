@@ -52,6 +52,10 @@
         :allowFiltering="false"
         :hiding-priority="2"
       >
+        <dx-async-rule
+          :validation-callback="asyncValidation"
+          message="El usuario ya existe"
+        />
         <dx-required-rule />
       </dx-column>
       <dx-column
@@ -138,6 +142,7 @@ import DxDataGrid, {
   DxExport,
   DxButton,
   DxItem as DxGridItem,
+  DxAsyncRule,
 } from "devextreme-vue/data-grid";
 import notify from "devextreme/ui/notify";
 import CustomStore from "devextreme/data/custom_store";
@@ -148,6 +153,33 @@ import { saveAs } from "file-saver";
 import { exportDataGrid } from "devextreme/excel_exporter";
 import api from "@/scripts/api";
 import auth from "@/auth";
+
+const sendRequest = function (value) {
+  let token = auth.getAuthorizationToken();
+  let existUser = false;
+
+  let data = {
+    username: value,
+  };
+
+  api
+    .post("/usuario/validar-username", data, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => {
+      existUser = response.data.data;
+    })
+    .catch((error) => {
+      notify(error.response.data.error.message, "error", 2000);
+    });
+
+  //Si el usuario existe no le dejamos insertar
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(!existUser);
+    }, 1000);
+  });
+};
 
 export default {
   data() {
@@ -229,6 +261,10 @@ export default {
       e.newData = Object.assign({}, e.oldData, e.newData);
     },
 
+    asyncValidation(params) {
+      return sendRequest(params.value);
+    },
+
     onExporting(e) {
       const workbook = new Workbook();
       const worksheet = workbook.addWorksheet("Usuarios");
@@ -270,6 +306,7 @@ export default {
     DxExport,
     BackButton,
     DxGridItem,
+    DxAsyncRule,
   },
 };
 </script>
