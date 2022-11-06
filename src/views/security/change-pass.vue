@@ -1,6 +1,6 @@
 <template>
   <div id="form-demo" class="content-block">
-    <h2>Usuarios</h2>
+    <h2>Cambiar Contraseña</h2>
 
     <div class="widget-container">
       <form action="your-action" @submit="handleSubmit">
