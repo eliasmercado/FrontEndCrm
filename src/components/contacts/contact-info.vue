@@ -169,6 +169,33 @@
             <dx-button id="buttonEmail" icon="email" @click="showEmailInfo" />
           </div>
         </template>
+        <template #communicationsTemplate>
+          <dx-data-grid
+            :show-borders="true"
+            :data-source="contactInfo.comunicaciones"
+          >
+            <dx-paging :page-size="10" />
+
+            <dx-column
+              caption="Tipo"
+              data-field="tipo"
+              :allow-sorting="false"
+              :allow-header-filtering="false"
+            />
+            <dx-column
+              data-field="motivo"
+              caption="Motivo"
+              :allow-sorting="false"
+              :allow-header-filtering="false"
+            />
+            <dx-column
+              data-field="fecha"
+              caption="Fecha"
+              :allow-sorting="false"
+              :allow-header-filtering="false"
+            />
+          </dx-data-grid>
+        </template>
         <dx-group-item>
           <dx-group-item caption="Datos Básicos" :col-count="3">
             <dx-simple-item template="nameTemplate" />
@@ -201,7 +228,9 @@
             </dx-tabbed-item>
           </dx-group-item>
         </dx-group-item>
-        <dx-group-item caption="Últimos contactos realizados"> </dx-group-item>
+        <dx-group-item caption="Últimos contactos realizados">
+          <dx-simple-item template="communicationsTemplate" />
+        </dx-group-item>
       </dx-form>
 
       <dx-popup
@@ -346,6 +375,7 @@ import {
   DxTab,
   DxLabel,
 } from "devextreme-vue/form";
+import { DxDataGrid, DxColumn, DxPaging } from "devextreme-vue/data-grid";
 import { DxHtmlEditor, DxToolbar, DxItem } from "devextreme-vue/html-editor";
 import { DxPopup, DxPosition, DxToolbarItem } from "devextreme-vue/popup";
 import DxTextBox from "devextreme-vue/text-box";
@@ -404,7 +434,9 @@ export default {
             observacion: this.callData.observations,
             idUsuario: auth.getUser().data.idUsuario,
             referencia: this.callData.phoneNumber,
-            fechaComunicacion: this.convertUTCDateToLocalDate(this.callData.callDate),
+            fechaComunicacion: this.convertUTCDateToLocalDate(
+              this.callData.callDate
+            ),
           };
 
           this.sendRequest("/comunicacion/llamada", data);
@@ -530,7 +562,7 @@ export default {
       });
     },
 
-     convertUTCDateToLocalDate(date) {
+    convertUTCDateToLocalDate(date) {
       var newDate = new Date(
         date.getTime() + date.getTimezoneOffset() * 60 * 1000
       );
@@ -571,6 +603,8 @@ export default {
     DxHtmlEditor,
     DxToolbar,
     DxItem,
+    DxDataGrid,
+    DxColumn,DxPaging
   },
 };
 </script>

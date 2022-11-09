@@ -470,11 +470,19 @@ export default {
       await this.getEconomicsActivities();
 
       let token = auth.getAuthorizationToken();
+      let esLead = false;
+      if (this.opportunityInfo.tipoCliente == "Lead") esLead = true;
 
       await api
-        .get("/contacto/" + this.opportunityInfo.contactoAsociado.idContacto, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        .get(
+          "/contacto/" +
+            this.opportunityInfo.contactoAsociado.idContacto +
+            "?esLead=" +
+            esLead,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        )
         .then((response) => {
           this.contactInfo = response.data.data;
         })
@@ -564,11 +572,19 @@ export default {
       await this.getStates();
 
       let token = auth.getAuthorizationToken();
+      let esLead = false;
+      if (this.opportunityInfo.tipoCliente == "Lead") esLead = true;
 
       await api
-        .get("/empresa/" + this.opportunityInfo.empresaAsociada.idEmpresa, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        .get(
+          "/empresa/" +
+            this.opportunityInfo.empresaAsociada.idEmpresa +
+            "?esLead=" +
+            esLead,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        )
         .then((response) => {
           this.companyInfo = response.data.data;
         })

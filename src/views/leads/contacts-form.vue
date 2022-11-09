@@ -412,9 +412,29 @@ export default {
       e.data.idPropietario = user.data.idUsuario;
     },
 
-    showContactInfo(e) {
+    async showContactInfo(e) {
+      let comm;
+      comm = await this.getCommunications(e.row.data.idContacto);
       this.contactInfo = e.row.data;
+      this.contactInfo.comunicaciones = comm;
       this.viewContactInfo = true;
+    },
+
+    async getCommunications(contactId) {
+      let token = auth.getAuthorizationToken();
+
+      let comm;
+      await api
+        .get("/contacto/comunicacion/" + contactId, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          comm = response.data.data;
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+      return comm;
     },
 
     onExporting(e) {
