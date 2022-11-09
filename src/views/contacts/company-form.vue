@@ -348,9 +348,29 @@ export default {
       e.data.idPropietario = user.data.idUsuario;
     },
 
-    showCompanyInfo(e) {
+    async showCompanyInfo(e) {
+      let comm;
+      comm = await this.getCommunications(e.row.data.idEmpresa);
       this.companyInfo = e.row.data;
+      this.companyInfo.comunicaciones = comm;
       this.viewCompanyInfo = true;
+    },
+
+    async getCommunications(companyId) {
+      let token = auth.getAuthorizationToken();
+
+      let comm;
+      await api
+        .get("/empresa/comunicacion/" + companyId, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          comm = response.data.data;
+        })
+        .catch((error) => {
+          notify(error.response.data.error.message, "error", 2000);
+        });
+      return comm;
     },
 
     onExporting(e) {
