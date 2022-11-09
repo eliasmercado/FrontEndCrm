@@ -62,80 +62,88 @@
     <!-- Fin Primer Bloque -->
     <br />
     <!-- Segundo Bloque -->
-    <div class="row">
-      <div class="col-7">
-        <dx-chart
-          class="card-text"
-          id="chart"
-          :data-source="salesForMonth"
-          title="Ventas del año por mes"
-        >
-          <dx-common-series-settings
-            argument-field="mes"
-            type="bar"
-            hover-mode="allArgumentPoints"
-            selection-mode="allArgumentPoints"
+    <div class="container">
+      <div class="row">
+        <div class="col-7">
+          <dx-chart
+            class="card-text"
+            id="chart"
+            :data-source="salesForMonth"
+            title="Ventas del año por mes"
           >
-            <dx-label :visible="true">
-              <dx-format :precision="0" type="fixedPoint" />
-            </dx-label>
-          </dx-common-series-settings>
-          <dx-series
-            argument-field="mes"
-            value-field="cantidad"
-            name="Ventas"
-            type="bar"
-            color="#ff8400"
-          />
-        </dx-chart>
-      </div>
+            <dx-common-series-settings
+              argument-field="mes"
+              type="bar"
+              hover-mode="allArgumentPoints"
+              selection-mode="allArgumentPoints"
+            >
+              <dx-label :visible="true">
+                <dx-format :precision="0" type="fixedPoint" />
+              </dx-label>
+            </dx-common-series-settings>
+            <dx-series
+              argument-field="mes"
+              value-field="cantidad"
+              name="Ventas"
+              type="bar"
+              color="#ff8400"
+            />
+          </dx-chart>
+        </div>
 
-      <div class="col-5">
-        <dx-pie-chart
-          id="pie"
-          :data-source="opportunitiesBySource"
-          type="doughnut"
-          title="Oportunidades por Fuente"
-          palette="Soft Pastel"
-        >
-          <dx-pie-series argument-field="fuente" value-field="cantidad">
-            <dx-pie-label :visible="true" format="fixedPoint">
-              <dx-connector :visible="true" />
-            </dx-pie-label>
-          </dx-pie-series>
-          <dx-pie-legend
-            :margin="0"
-            horizontal-alignment="right"
-            vertical-alignment="top"
-          />
-          <dx-tooltip :enabled="true" :customize-tooltip="customizeTooltip">
-            <dx-pie-format type="fixedPoint" />
-          </dx-tooltip>
-        </dx-pie-chart>
+        <div class="col-5">
+          <dx-pie-chart
+            id="pie"
+            :data-source="opportunitiesBySource"
+            type="doughnut"
+            title="Oportunidades por Fuente"
+            palette="Soft Pastel"
+          >
+            <dx-pie-series argument-field="fuente" value-field="cantidad">
+              <dx-pie-label :visible="true" format="fixedPoint">
+                <dx-connector :visible="true" />
+              </dx-pie-label>
+            </dx-pie-series>
+            <dx-pie-legend
+              :margin="0"
+              horizontal-alignment="right"
+              vertical-alignment="top"
+            />
+            <dx-tooltip :enabled="true" :customize-tooltip="customizeTooltip">
+              <dx-pie-format type="fixedPoint" />
+            </dx-tooltip>
+          </dx-pie-chart>
+        </div>
       </div>
     </div>
     <!-- Fin Segundo Bloque -->
     <br />
 
     <!-- Tercer Bloque -->
-    <dx-chart
-      id="chartCat"
-      :customize-point="customizePoint"
-      :class="isFirstLevel ? 'pointer-on-bars' : ''"
-      :data-source="dsOpportunitiesByCategory"
-      title="Ventas por Categoría"
-      @point-click="onPointClick"
-    >
-      <dx-series type="bar" argument-field="categoria" value-field="cantidad" />
-      <dx-value-axis :show-zero="false" />
-      <dx-legend :visible="false" />
-    </dx-chart>
-    <dx-button
-      :visible="!isFirstLevel"
-      text="Volver"
-      icon="chevronleft"
-      @click="onButtonClick"
-    />
+    <div class="container">
+      <dx-chart
+        id="chartCat"
+        :customize-point="customizePoint"
+        :class="isFirstLevel ? 'pointer-on-bars' : ''"
+        :data-source="dsOpportunitiesByCategory"
+        title="Ventas por Categoría"
+        @point-click="onPointClick"
+      >
+        <dx-series
+          type="bar"
+          argument-field="categoria"
+          value-field="cantidad"
+        />
+        <dx-value-axis :show-zero="false" />
+        <dx-legend :visible="false" />
+      </dx-chart>
+      <dx-button
+        :visible="!isFirstLevel"
+        text="Volver"
+        icon="chevronleft"
+        @click="onButtonClick"
+      />
+    </div>
 
     <br />
     <br />
