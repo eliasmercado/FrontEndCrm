@@ -43,7 +43,7 @@ export default {
   },
   data() {
     return {
-      menus,
+      menus: [],
       selectedRowKeys: [],
       profiles: [],
       isChanged: false,
