@@ -31,7 +31,7 @@
         <span class="text-center" style="opacity: 0.8">Nuevos Contactos</span>
         <hr class="hr hr-blurry" />
         <span class="text-center mb-15" style="opacity: 0.5"
-          >Total: {{ quantities.contactos.cantidad }}</span
+          >Total: {{ quantities.contactos.total }}</span
         >
       </div>
       <div class="card shadow-sm rounded" style="width: 18%; height: 10rem">
@@ -43,7 +43,7 @@
         >
         <hr class="hr hr-blurry" />
         <span class="text-center mb-15" style="opacity: 0.5"
-          >Total: {{ quantities.oportunidadesAbiertas.cantidad }}</span
+          >Total: {{ quantities.oportunidadesAbiertas.total }}</span
         >
       </div>
       <div class="card shadow-sm rounded" style="width: 18%; height: 10rem">
@@ -55,7 +55,7 @@
         >
         <hr class="hr hr-blurry" />
         <span class="text-center mb-15" style="opacity: 0.5"
-          >Total: {{ quantities.oportunidadesGanadas.cantidad }}</span
+          >Total: {{ quantities.oportunidadesGanadas.total }}</span
         >
       </div>
     </div>
