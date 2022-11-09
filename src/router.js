@@ -17,6 +17,8 @@ import TaskForm from "./views/activities/task-form"
 import UsersForm from "./views/security/users-form"
 import ChangePass from "./views/security/change-pass.vue"
 import ResetPass from "./views/security/reset-pass.vue"
+import Permission from "./views/security/permission-form.vue"
+import ProfileForm from "./views/security/profiles-form.vue"
 
 Vue.use(Router);
 
@@ -124,7 +126,7 @@ const router = new Router({
     },
     {
       path: "/usuarios",
-      name: "Usuarios",
+      name: "Users",
       meta: { requiresAuth: true },
       components: {
         layout: defaultLayout,
@@ -133,7 +135,7 @@ const router = new Router({
     },
     {
       path: "/cambiar-pass",
-      name: "Cambiar Contraseña",
+      name: "ChangePass",
       meta: { requiresAuth: true },
       components: {
         layout: defaultLayout,
@@ -142,11 +144,28 @@ const router = new Router({
     },
     {
       path: "/resetear-pass",
-      name: "Resetear Contraseña",
+      name: "ResetPass",
       meta: { requiresAuth: true },
       components: {
         layout: defaultLayout,
         content: ResetPass
+      },
+    },
+    {
+      path: "/permisos",
+      name: "Permission",
+      meta: { requiresAuth: true },
+      components: {
+        layout: defaultLayout,
+        content: Permission
+      },
+    }, {
+      path: "/perfiles",
+      name: "Profiles",
+      meta: { requiresAuth: true },
+      components: {
+        layout: defaultLayout,
+        content: ProfileForm
       },
     },
     {
