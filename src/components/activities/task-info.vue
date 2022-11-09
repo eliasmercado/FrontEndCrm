@@ -320,6 +320,7 @@
 
     <opportunity-info
       v-if="viewOpportunityInfo"
+      @hidden-button-add="updateViewBtnAdd"
       :opportunityId="opportunityId"
     />
   </div>
@@ -406,6 +407,10 @@ export default {
       this.viewContactInfo = false;
       this.viewCompanyInfo = false;
       this.viewOpportunityInfo = true;
+    },
+
+    updateViewBtnAdd(isHidden) {
+      this.btnVolverInfo = !isHidden;
     },
 
     async getTaskInfo() {
