@@ -366,6 +366,7 @@
             <dx-item name="orderedList" />
             <dx-item name="bulletList" />
             <dx-item name="separator" />
+            <dx-item name="color" />
           </dx-toolbar>
         </dx-html-editor>
       </dx-popup>

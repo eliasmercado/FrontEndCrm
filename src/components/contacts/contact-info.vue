@@ -103,7 +103,7 @@
         </template>
         <template #companyNameTemplate>
           <div>
-            <div>Acitividad Económica</div>
+            <div>Empresa</div>
             <dx-text-box
               :read-only="true"
               :hover-state-enabled="false"
@@ -359,6 +359,7 @@
             <dx-item name="orderedList" />
             <dx-item name="bulletList" />
             <dx-item name="separator" />
+            <dx-item name="color" />
           </dx-toolbar>
         </dx-html-editor>
       </dx-popup>
@@ -604,7 +605,8 @@ export default {
     DxToolbar,
     DxItem,
     DxDataGrid,
-    DxColumn,DxPaging
+    DxColumn,
+    DxPaging,
   },
 };
 </script>

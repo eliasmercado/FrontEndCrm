@@ -14,6 +14,8 @@
       :column-auto-width="true"
       @row-updating="getJsonForUpdate"
       @exporting="onExporting"
+      @editing-start="editingStart"
+      @init-new-row="initNewRow"
     >
       <dx-export :enabled="true" />
       <dx-search-panel :visible="true" :width="300"></dx-search-panel>
@@ -197,6 +199,7 @@ export default {
         loadMode: "raw",
         load: () => this.sendRequest("/usuario/perfil"),
       }),
+      isEdit: false,
     };
   },
   methods: {
@@ -261,8 +264,27 @@ export default {
       e.newData = Object.assign({}, e.oldData, e.newData);
     },
 
+    editingStart() {
+      this.isEdit = true;
+    },
+
+    initNewRow() {
+      this.isEdit = false;
+    },
+
     asyncValidation(params) {
-      return sendRequest(params.value);
+      if (this.isEdit) return this.validate();
+      else return sendRequest(params.value);
+    },
+
+    validate() {
+      let existUser = false;
+      //Si el usuario existe no le dejamos insertar
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(!existUser);
+        }, 1000);
+      });
     },
 
     onExporting(e) {
